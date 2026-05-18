@@ -1,12 +1,13 @@
 ---
 title: FinalShell 技术支持与教程
 layout: layout.njk
-permalink: /blog/index.html
 pagination:
   data: collections.blog
   size: 10
   alias: posts
   reverse: true
+# 🎯 核心修复：根据当前页码动态分配路径，彻底解决多页面输出冲突
+permalink: "blog/{% if pagination.pageNumber > 0 %}page-{{ pagination.pageNumber }}/{% endif %}index.html"
 ---
 
 <!-- 
@@ -15,7 +16,7 @@ pagination:
 -->
 <main class="list-container" style="max-width: 900px; margin: 0 auto; padding: 10px 0;">
     
-    <!-- 动态动态提示当前页码（只在第2页及以后显示），SEO 非常友好 -->
+    <!-- 动态提示当前页码（只在第2页及以后显示），SEO 非常友好 -->
     {% if pagination.pageNumber > 0 %}
         <div style="color: #999; margin-bottom: 20px; font-size: 0.9rem;">
             当前位置：<a href="/" style="color: #666; text-decoration: none;">首页</a> &gt; <a href="/blog/" style="color: #666; text-decoration: none;">文章列表</a> &gt; 第 {{ pagination.pageNumber + 1 }} 页
