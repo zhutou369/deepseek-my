@@ -57,9 +57,11 @@ jobs:
         GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
       run: node autobot.js ${{ github.event.inputs.post_count || '5' }}
 
-    # 5. 🌟 核心新增：执行 Eleventy 编译，将新生成的 Markdown 动态渲染为纯静态 HTML 网页
+    # 5. 🌟 权限修复重构版：强制解锁 node_modules 可执行特权，阻断 Exit code 127 碎版错误
     - name: Build Eleventy Site
-      run: npx @11ty/eleventy
+      run: |
+        chmod -R +x ./node_modules/.bin/
+        npx @11ty/eleventy
 
     # 6. 检查是否有新文章诞生，并推回 GitHub（包含生成的 posts 和编译后的 _site 静态页面）
     - name: Commit and Push Changes back to Repo
@@ -73,7 +75,7 @@ jobs:
         
         # 检查是否有代码改变（包括 keywords.json 的减少、posts 内新 md 的增加以及 _site 网页的更新）
         if ! git diff --cached --quiet; then
-          git commit -m "🤖 [Bot] 自动同步/手动测试：批量更新文章、重新编译全站并同步词库"
+          git commit -m "🤖 [Bot] 自动同步/手动测试：批量更新文章、修复权限并重新编译全站同步词库"
           # 带着特权临时 Token 强制安全推回 main 分支
           git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git HEAD:main
           echo "✅ 成功反向将新文章、编译后的静态网页与更新后的词库同步回 GitHub 仓库！"
