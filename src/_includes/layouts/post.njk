@@ -1,0 +1,27 @@
+---
+layout: layouts/base.njk
+---
+<article class="post-content-wrapper">
+  <header class="post-content-header">
+    <h1>{{ title }}</h1>
+    <div class="post-content-meta">
+      <span>發布日期：{{ date | dateFilter }}</span>
+      <span>分類：DeepSeek 核心技術專題</span>
+      <span>讀者對象：香港開發者及企業決策層</span>
+    </div>
+  </header>
+
+  <section class="post-body-markdown">
+    {{ content | safe }}
+  </section>
+  
+  <footer class="post-content-footer">
+    <div class="inner-navigation">
+      <p><strong>站內導航閉環：</strong></p>
+      <ul>
+        <li>返回 <a href="/">DeepSeek 香港情報站首頁</a> 獲取每日最新動態。</li>
+        <li>前往 <a href="/posts/">技術文章檔案庫</a> 檢索更多 AI 落地實踐。</li>
+      </ul>
+    </div>
+  </footer>
+</article>

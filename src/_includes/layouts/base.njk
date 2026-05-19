@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ title }} | DeepSeek 香港非官方中文情報站</title>
+  <meta name="description" content="{{ description }}">
+  <meta name="keywords" content="DeepSeek, DeepSeek香港, DeepSeek中文, AI大模型, 深度求索, DeepSeek教學, DeepSeek企業應用">
+  
+  <meta property="og:title" content="{{ title }} | DeepSeek 香港非官方中文情報站">
+  <meta property="og:description" content="{{ description }}">
+  <meta property="og:type" content="{{ 'article' if layout == 'layouts/post.njk' else 'website' }}">
+  <meta property="og:locale" content="zh_HK">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+  <script charset="UTF-8" id="LA_COLLECT" src="//sdk.51.la/js-sdk-pro.min.js"></script>
+  <script>LA.init({id:"3K7l95Zodr0uFrIN",ck:"3K7l95Zodr0uFrIN"})</script>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="container header-flex">
+      {% if page.url == "/" %}
+        <h1 class="logo"><a href="/">DeepSeek 香港情報站</a></h1>
+      {% else %}
+        <div class="logo"><a href="/">DeepSeek 香港情報站</a></div>
+      {% endif %}
+      <nav class="site-nav">
+        <ul>
+          <li><a href="/" {% if page.url == "/" %}class="active"{% endif %}>首頁</a></li>
+          <li><a href="/posts/" {% if page.url == "/posts/" %}class="active"{% endif %}>最新文章</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main class="site-main container">
+    {{ content | safe }}
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="friend-links">
+        <h3>友情鏈接：</h3>
+        <ul>
+          <li><a href="https://deepseek-chat.com" target="_blank" rel="noopener" title="DeepSeek 線上聊天智能對話">DeepSeek 線上智能對話</a></li>
+          <li><a href="https://hk-deepseek.com" target="_blank" rel="noopener" title="DeepSeek 香港繁體技術社區">DeepSeek 香港技術社區</a></li>
+          <li><a href="https://deepseek-in.com" target="_blank" rel="noopener" title="DeepSeek 全球產業應用整合">DeepSeek 產業應用網</a></li>
+          <li><a href="https://deepseek-1.com" target="_blank" rel="noopener" title="DeepSeek 第一中文繁體教學門戶">DeepSeek 中文教學門戶</a></li>
+          <li><a href="https://deepseek-my.com" target="_blank" rel="noopener" title="DeepSeek 個人自動化高效方案">DeepSeek 高效方案中心</a></li>
+        </ul>
+      </div>
+      <div class="copyright">
+        <p>&copy; 2026 DeepSeek 香港非官方中文情報站。版權所有。本站內容專為香港及全球繁體用戶優化。</p>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>

@@ -1,0 +1,25 @@
+---
+layout: layouts/base.njk
+title: 所有 DeepSeek 技術文章與應用教學檔案庫
+description: 瀏覽所有關於 DeepSeek (深度求索) 的繁體中文技術指南、API 整合方案、提示詞優化技巧及香港本地數字轉型精選案例。
+---
+
+<header class="archive-header">
+  <h2>DeepSeek 繁體中文全量文章檔案庫</h2>
+  <p>這裏匯集了本站發布的所有關於 DeepSeek 模型的深度剖析、本地化私有部署、提示詞工程以及商業落地實踐指南。</p>
+</header>
+
+<div class="archive-grid">
+  <div class="archive-list">
+    {% for post in collections.posts %}
+      <article class="archive-card">
+        <span class="archive-date">{{ post.date | dateFilter }}</span>
+        <h3><a href="{{ post.url }}">{{ post.data.title }}</a></h3>
+        <p>{{ post.data.description }}</p>
+        <a href="{{ post.url }}" class="archive-link">閱讀全文 &middot; 掌握核心技術</a>
+      </article>
+    {% else %}
+      <p>正在全力編撰精準內容中，請稍後回來查看。</p>
+    {% endfor %}
+  </div>
+</div>

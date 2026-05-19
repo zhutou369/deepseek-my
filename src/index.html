@@ -1,0 +1,47 @@
+---
+layout: layouts/base.njk
+title: DeepSeek 香港非官方中文情報站 - 領先的 AI 大模型技術與應用指南
+description: 專為香港用戶打造的 DeepSeek 繁體中文情報站。提供最新的 DeepSeek R1 部署教學、API 整合方案、企業自動化應用及香港本地 AI 科技趨勢追蹤。
+---
+
+<section class="hero-section">
+  <h2>引領智能時代：DeepSeek 繁體中文專業科技擴展門戶</h2>
+  <p>全面解析 DeepSeek 深度求索大模型的開源生態、本地化私有部署、提示詞優化（Prompting）以及商業落地案例，助力香港企業與開發者實現精準降本增效。</p>
+</section>
+
+<div class="main-grid">
+  <section class="latest-posts-section">
+    <h2 class="section-title">最新更新文章（5篇精選）</h2>
+    <div class="post-list">
+      {% for post in collections.posts | limit(5) %}
+        <article class="post-card">
+          <div class="post-meta">{{ post.date | dateFilter }}</div>
+          <h3><a href="{{ post.url }}">{{ post.data.title }}</a></h3>
+          <p class="post-desc">{{ post.data.description }}</p>
+          <a href="{{ post.url }}" class="read-more">閱讀全文 &rarr;</a>
+        </article>
+      {% else %}
+        <p>目前尚無文章發布，請密切留意更新！</p>
+      {% endfor %}
+    </div>
+    <div class="more-btn-container">
+      <a href="/posts/" class="btn-primary">查看全部歷史文章 &rarr;</a>
+    </div>
+  </section>
+
+  <aside class="sidebar-section">
+    <div class="sidebar-box">
+      <h3>核心研究專題</h3>
+      <ul class="internal-links">
+        <li><a href="/posts/">DeepSeek R1 開源模型架構解析</a></li>
+        <li><a href="/posts/">香港中小企如何低成本對接 DeepSeek API</a></li>
+        <li><a href="/posts/">提示詞工程：如何激發 DeepSeek 深度思考能力</a></li>
+        <li><a href="/posts/">繁體中文環境下的 AI 語意精準度優化指南</a></li>
+      </ul>
+    </div>
+    <div class="sidebar-box banner-box">
+      <h3>技術安全防護</h3>
+      <p>本站全線經由高性能網絡防禦節點加固，確保全球及香港本地用戶享受高速、隱私安全的瀏覽體驗。</p>
+    </div>
+  </aside>
+</div>

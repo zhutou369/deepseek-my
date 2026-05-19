@@ -3,28 +3,28 @@ const fs = require('fs');
 const path = require('path');
 
 async function runAutoBot() {
-    // 1. 检查环境变量中是否存在密钥
+    // 1. 檢查環境變量中是否存在金鑰
     const apiKey = process.env.GEMINI_API_KEY;
     if (!apiKey) {
-        console.warn("⚠️ [环境提示] 未检测到 GEMINI_API_KEY 环境密钥。打包阶段跳过生成。");
+        console.warn("⚠️ [環境提示] 未檢測到 GEMINI_API_KEY 環境金鑰。打包階段跳過生成。");
         return; 
     }
 
-    // 从命令行参数中获取需要生成的文章篇数（例如 node autobot.js 5）
+    // 從命令列參數中獲取需要生成的文章篇數（例如 node autobot.js 5）
     const args = process.argv.slice(2);
     let maxPosts = parseInt(args[0], 10) || 1;
-    console.log(`🤖 收到发文指令，本次任务尝试批量生成: ${maxPosts} 篇文章`);
+    console.log(`🤖 收到發文指令，本次任務嘗試批量生成: ${maxPosts} 篇文章`);
 
-    // 2. 初始化 Gemini 客户端
+    // 2. 初始化 Gemini 客戶端
     const ai = new GoogleGenAI({ apiKey: apiKey });
 
-    // 文件路径切回标准的 .json 格式
-    const jsonPath = path.join(__dirname, 'keywords.json');   
-    const imagesPath = path.join(__dirname, 'images.txt'); 
+    // 🌟 核心修正：將所有詞庫與圖片庫路徑對齊至新架構的 src 目錄下
+    const jsonPath = path.join(__dirname, 'src', 'keywords.json');   
+    const imagesPath = path.join(__dirname, 'src', 'images.txt'); 
     
-    // 3. 检查并读取 JSON 关键词文本
+    // 3. 檢查並讀取 JSON 關鍵詞文本
     if (!fs.existsSync(jsonPath)) {
-        console.warn("⚠️ 未找到 keywords.json 词库文件，跳过本次生成。");
+        console.warn(`⚠️ 未找到詞庫文件: ${jsonPath}，跳過本次生成。`);
         return;
     }
     
@@ -32,130 +32,134 @@ async function runAutoBot() {
     try {
         keywords = JSON.parse(fs.readFileSync(jsonPath, 'utf-8'));
     } catch (e) {
-        console.error("⚠️ 读取或解析 keywords.json 失败，请检查JSON语法:", e.message);
+        console.error("⚠️ 讀取或解析 keywords.json 失敗，請檢查JSON語法:", e.message);
         return;
     }
     
     if (!Array.isArray(keywords) || keywords.length === 0) {
-        console.warn("⚠️ 关键词库为空或格式非数组，请及时补充新选题！");
+        console.warn("⚠️ 關鍵詞庫為空或格式非陣列，請及時補充新選題！");
         return;
     }
 
-    // 调整生成数量：如果输入的数量大于词库剩余词量，以词库剩余数量为准
+    // 調整生成數量：如果輸入的數量大於詞庫剩餘詞量，以詞庫剩餘數量為準
     if (maxPosts > keywords.length) {
-        console.log(`💡 提示：输入的数量 ${maxPosts} 大于词库剩余词量 ${keywords.length}，将生成现存的全部文章。`);
+        console.log(`💡 提示：輸入的數量 ${maxPosts} 大於詞庫剩餘詞量 ${keywords.length}，將生成現存的全部文章。`);
         maxPosts = keywords.length;
     }
 
-    // 🌟 将文章生成的“核心步骤”打包塞入 for 循环，实现批量生成
+    // 🌟 將文章生成的“核心步驟”打包塞入 for 迴圈，實現批量生成
     for (let currentLoop = 0; currentLoop < maxPosts; currentLoop++) {
-        console.log(`\n------------------ 正在处理第 ${currentLoop + 1} / ${maxPosts} 篇 ------------------`);
+        console.log(`\n------------------ 正在處理第 ${currentLoop + 1} / ${maxPosts} 篇 ------------------`);
 
-        // 4. 提取并准备随机图片链接
+        // 4. 提取並準備隨機圖片連結
         let selectedImages = [];
         if (fs.existsSync(imagesPath)) {
             try {
                 const allImages = fs.readFileSync(imagesPath, 'utf-8')
                     .split(/\r?\n/)
-                    .map(line => line.trim().replace(/^\s*/i, '')) 
+                    .map(line => line.trim()) 
                     .filter(line => line.length > 0 && line.startsWith('http'));
 
                 if (allImages.length >= 2) {
                     const shuffled = allImages.sort(() => 0.5 - Math.random());
                     selectedImages = shuffled.slice(0, 2);
-                    console.log(`图片配给成功: 1. ${selectedImages[0]} | 2. ${selectedImages[1]}`);
+                    console.log(`圖片配給成功: 1. ${selectedImages[0]} | 2. ${selectedImages[1]}`);
                 } else if (allImages.length === 1) {
                     selectedImages = [allImages[0], allImages[0]];
                 }
             } catch (e) {
-                console.error("⚠️ 读取 images.txt 失败，本篇生成将不带插图:", e.message);
+                console.error("⚠️ 讀取 images.txt 失敗，本篇生成將不帶插圖:", e.message);
             }
         }
 
-        // 5. 弹出并消费第一个关键词
+        // 5. 彈出並消費第一個關鍵詞
         const currentTopic = keywords.shift();
-        console.log(`当前推文选题确定: [ ${currentTopic} ]`);
+        console.log(`當前推文選題確定: [ ${currentTopic} ]`);
 
         const todayStr = new Date().toISOString().split('T')[0];
         const randomId = Math.floor(100 + Math.random() * 900); 
 
-        // 6. 构造图片指导 Prompt
+        // 6. 構造圖片指導 Prompt
         let imagePromptInstruction = '';
         if (selectedImages.length === 2) {
             imagePromptInstruction = `
-    4. 【插图嵌入要求】：
-       请在撰写文章正文时，将以下两个图片链接【严格、自然地】嵌入到不同的二级标题（##）或段落之间，提升排版丰富度。
-       必须使用标准的 Markdown 图片格式，且必须补充具有 SEO 价值的 alt 描述（严禁包含中文百分号或特殊字符）。
+    4. 【插圖嵌入要求】：
+       請在撰寫文章正文時，將以下兩個圖片連結【嚴格、自然地】嵌入到不同的二級標題（##）或段落之間，提升排版豐富度。
+       必須使用標準的 Markdown 圖片格式，且必須補充具有 SEO 價值、使用繁體中文的 alt 描述（嚴禁包含中文百分號或特殊字元）。
        
-       图片链接 1：${selectedImages[0]}
-       图片链接 2：${selectedImages[1]}
+       圖片連結 1：${selectedImages[0]}
+       圖片連結 2：${selectedImages[1]}
        
-       例如嵌入格式：![FinalShell 核心功能界面演示](${selectedImages[0]})
+       例如嵌入格式：![DeepSeek 香港企業應用架構演示](${selectedImages[0]})
             `;
         }
 
-        // 7. 构造终极 SEO Prompt 模板（已完全适配新版 11ty 模板布局与标签）
+        // 7. 構造終極 香港本地化 SEO Prompt 模板（全面鎖定 src 開發路徑與新版 layouts/post.njk 佈局）
         const prompt = `
-    你是一个精通技术SEO和前沿网络技术的专家博主。请针对主题 "${currentTopic}" 撰写一篇深入、对用户有极高价值的原创文章。
+    你是一個精通技術 SEO、網絡安全以及大模型基礎設施的香港本地權威科技博主。請針對主題 "${currentTopic}" 撰寫一篇深入、對用戶有極高價值、且全面使用【香港繁體中文】（zh-HK）的技術原創文章。
     
     【重要核心要求】：
-    1. 请将本次的主题 "${currentTopic}" 翻译为一个干净、地道、用连字符隔开的【纯英文短语】，作为 URL 的别名（Slug）。
-    2. 字数严格控制在 1200 - 2000 字之间，多用结构化列表、二级标题（##）、三级标题（###）。
-    3. 严格按以下 Markdown 格式输出头部元数据，禁止在最外层包含 \`\`\`markdown 包裹外壳，必须直接以 --- 开头：
+    1. 請將本次的主題 "${currentTopic}" 翻譯為一個乾淨、地道、用連字符隔開的【純英文短語】，作為 URL 的別名（Slug）。
+    2. 字数嚴格控制在 1200 - 2000 字之間。多用結構化列表、二級標題（##）、三級標題（###）。
+    3. 全篇文本（包含標題和描述）必須使用正宗的香港繁體字，多使用本地常用詞（如：教學、優化、中小企、數字轉型、網絡、顯示卡）。
+    4. 嚴格按以下 Markdown 格式輸出頭部元數據，禁止在最外層包含 \`\`\`markdown 包裹外殼，必須直接以 --- 開頭：
 
     ---
     title: "${currentTopic}"
-    description: "针对${currentTopic}的专业技术解析与实操指南。"
+    description: "針對${currentTopic}的專業技術解析與香港本地化實操指南。"
     date: ${todayStr}
     tags: ["posts"]
-    layout: "post.njk"
-    permalink: "/posts/${todayStr}-你的纯英文短语-${randomId}/index.html"
+    layout: "layouts/post.njk"
+    permalink: "/posts/${todayStr}-你的純英文短語-${randomId}/index.html"
     ---
 
-    【注意】：请务必将上面 permalink 里面的 "你的纯英文短语" 替换为你真正翻译出来的英文 Slug。不要保留任何多余的引号或括号。
+    【注意】：請務必將上面 permalink 裡面的 "你的純英文短語" 換為你真正翻譯出來的英文 Slug。不要保留任何多餘的引號或括號。
     ${imagePromptInstruction}
 
-    这里开始写文章正文。请多用二级标题（##）、三级标题（###）对内容进行多层级切分，保证极佳的SEO可读性与结构性。
+    這裡開始寫文章正文。請多用二級標題（##）、三級標題（###）對內容進行多層級切分，保證極佳的 SEO 可讀性與結構性。
         `;
 
         try {
-            console.log('正在连接 Gemini API 生产高质量内容...');
+            console.log('正在連接 Gemini API 生產高質量繁體內容...');
+            // 🌟 升級 Paid 階層專享的最新一代 Gemini 3 Flash 模型
             const response = await ai.models.generateContent({
-                model: 'gemini-2.5-flash',
+                model: 'gemini-3-flash',
                 contents: prompt,
             });
 
             let articleContent = response.text;
             if (!articleContent) {
-                throw new Error("Gemini 返回内容为空");
+                throw new Error("Gemini 返回內容為空");
             }
 
-            // 🌟 安全增强：清洗可能由于 AI 理解偏差导致的 permalink 语法残留（例如多余的引号或中括号）
+            // 安全增強：清洗可能由於 AI 理解偏差導致的 permalink 語法殘留
             articleContent = articleContent.replace(/permalink:\s*["']?\/posts\/([^"'\n]+)["']?/g, 'permalink: "/posts/$1"');
 
-            // 为了防止同秒内生成的 randomId 撞车，加上 currentLoop 索引增加唯一性
+            // 為了防止同秒內生成的 randomId 撞車，加上 currentLoop 索引增加唯一性
             const fileName = `${todayStr}-post-${randomId}-${currentLoop}.md`;
-            const outputDir = path.join(__dirname, 'posts'); 
+            
+            // 🌟 核心修正：將輸出目錄死死鎖定在 src/posts 下，保證 11ty 能正常抓取編譯
+            const outputDir = path.join(__dirname, 'src', 'posts'); 
             if (!fs.existsSync(outputDir)) {
                 fs.mkdirSync(outputDir, { recursive: true });
             }
             
             fs.writeFileSync(path.join(outputDir, fileName), articleContent, 'utf-8');
-            console.log(`✅ 第 ${currentLoop + 1} 篇文章已成功写入本地磁盘: posts/${fileName}`);
+            console.log(`✅ 第 ${currentLoop + 1} 篇文章已成功寫入本地磁碟: src/posts/${fileName}`);
 
         } catch (error) {
-            console.error(`❌ 第 ${currentLoop + 1} 篇文章生成遭遇错误:`, error.message);
-            // 如果某一篇失败了，把当前错过的词塞回去，防止词库无故丢失
+            console.error(`❌ 第 ${currentLoop + 1} 篇文章生成遭遇錯誤:`, error.message);
+            // 如果某一篇失敗了，把當前錯過的詞塞回去，防止詞庫無故丟失
             keywords.unshift(currentTopic);
         }
     }
 
-    // 当所有的循环全部执行完毕完毕后，再一次性回写成标准的 JSON 数组格式
+    // 當所有的迴圈全部執行完畢後，再一次性回寫成標準的 JSON 陣列格式
     try {
         fs.writeFileSync(jsonPath, JSON.stringify(keywords, null, 2), 'utf-8');
-        console.log(`\n📉 词库整体更新完毕！剩余可用关键词数: ${keywords.length}`);
+        console.log(`\n📉 詞庫整體更新完畢！剩餘可用關鍵詞數: ${keywords.length}`);
     } catch (e) {
-        console.error("❌ 回写 keywords.json 失败:", e.message);
+        console.error("❌ 回寫 keywords.json 失敗:", e.message);
     }
 }
 
