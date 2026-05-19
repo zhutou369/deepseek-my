@@ -76,7 +76,7 @@ async function runAutoBot() {
         const currentTopic = keywords.shift();
         console.log(`當前推文選題確定: [ ${currentTopic} ]`);
 
-        // 🌟 核心安全修正：強制轉化香港本地時間，並用正則表達式把預設的斜槓（/）替換為減號（-）
+        // 核心安全修正：強制轉化香港本地時間，並用正則表達式把預設的斜槓（/）替換為減號（-）
         // 否則 Linux 系統在執行 writeFileSync 時會誤將 2026/05/19 當成資料夾路徑從而噴出 ENOENT 錯誤中斷！
         const now = new Date();
         const rawHkDate = now.toLocaleDateString('zh-HK', { timeZone: 'Asia/Hong_Kong', year: 'numeric', month: '2-digit', day: '2-digit' });
@@ -124,19 +124,57 @@ async function runAutoBot() {
     這裡開始寫文章正文。請多用二級標題（##）、三級標題（###）對內容進行多層級切分，保證極佳的 SEO 可讀性與結構性。
         `;
 
-        try {
-            console.log('正在連接 Gemini API 生產高質量繁體內容...');
-            // 🎯 嚴格鎖定官方高併發專用 gemini-2.5-flash 模型
-            const response = await ai.models.generateContent({
-                model: 'gemini-2.5-flash',
-                contents: prompt,
-            });
+        // ==========================================
+        // 🌟 核心增強：智能抗併發自動重試機制（解決 503 臨時伺服器塞車錯誤）
+        // ==========================================
+        let response;
+        let retryCount = 0;
+        const maxRetries = 3;
+        const delay = (ms) => new Promise(res => setTimeout(res, ms));
 
-            let articleContent = response.text;
-            if (!articleContent) {
-                throw new Error("Gemini 返回內容為空");
+        while (retryCount < maxRetries) {
+            try {
+                console.log(`正在連接 Gemini API 生產高質量繁體內容... (嘗試第 ${retryCount + 1} 次)`);
+                
+                // 🎯 嚴格鎖定官方高併發專用 gemini-2.5-flash 模型
+                response = await ai.models.generateContent({
+                    model: 'gemini-2.5-flash',
+                    contents: prompt,
+                });
+
+                if (response && response.text) {
+                    console.log("🎉 Gemini API 響應成功！已順利拿到繁體正文。");
+                    break; // 成功拿到數據，跳出重試循環
+                } else {
+                    throw new Error("Gemini 返回內容為空");
+                }
+            } catch (error) {
+                retryCount++;
+                const errMsg = error.message.toLowerCase();
+                
+                // 判斷是否為 503Unavailable 服務器忙碌 或 429 頻率限制
+                if (errMsg.includes('503') || errMsg.includes('unavailable') || errMsg.includes('429')) {
+                    if (retryCount < maxRetries) {
+                        console.warn(`⚠️ Google 服務器正值流量高峰 (503/429)。原地等待 5 秒後自動重試...`);
+                        await delay(5000); // 靜默等待 5 秒
+                    }
+                } else {
+                    // 如果是其他類型的致命錯誤（如 API 密鑰無效），直接拋出，不進行盲目重試
+                    throw error;
+                }
             }
+        }
 
+        // 悲觀保底流程：如果重試了 3 次依然全部失敗，則把詞還給詞庫，跳過本篇，防止詞彙意外丟失
+        if (!response || !response.text) {
+            console.error(`❌ 連續重試 ${maxRetries} 次後 Gemini API 依然處於高載狀態，將本期選題塞回詞庫，跳過本篇。`);
+            keywords.unshift(currentTopic);
+            continue; 
+        }
+
+        try {
+            let articleContent = response.text;
+            
             // 安全增強：清洗可能由於 AI 理解偏差導致的 permalink 語法殘留
             articleContent = articleContent.replace(/permalink:\s*["']?\/posts\/([^"'\n]+)["']?/g, 'permalink: "/posts/$1"');
 
@@ -153,8 +191,8 @@ async function runAutoBot() {
             console.log(`✅ 第 ${currentLoop + 1} 篇文章已成功寫入本地磁碟: src/posts/${fileName}`);
 
         } catch (error) {
-            console.error(`❌ 第 ${currentLoop + 1} 篇文章生成遭遇錯誤:`, error.message);
-            // 如果某一篇失敗了，把當前錯過的詞塞回去，防止詞庫無故丟失
+            console.error(`❌ 第 ${currentLoop + 1} 篇文章寫入磁碟時遭遇錯誤:`, error.message);
+            // 寫入硬碟失敗也需要把詞還回去
             keywords.unshift(currentTopic);
         }
     }
