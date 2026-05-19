@@ -3,6 +3,10 @@ module.exports = function (eleventyConfig) {
   eleventyConfig.addPassthroughCopy("static");
   eleventyConfig.addPassthroughCopy("css");
   eleventyConfig.addPassthroughCopy("images.txt");
+  
+  // 🌟【核心修复】强制 11ty 必须将整个 ai1 文件夹原封不动拷贝到发布目录！
+  // 只有加了这一行，你内嵌了纯 JS 变量的全新后台页面才能在云端存活，彻底消灭 404 YAML 报错！
+  eleventyConfig.addPassthroughCopy("ai1");
 
   // 2. 核心修复：注册 posts 文章集合（与模板中 collections.posts 完全对齐），并增加极致的时区与未来发布容错
   eleventyConfig.addCollection("posts", function (collectionApi) {
@@ -13,7 +17,7 @@ module.exports = function (eleventyConfig) {
       // 获取当前时间的本地时间戳
       const now = new Date();
       
-      // 🌟 时区安全锁：即使 Gemini 生成的 UTC 日期跨天变成了“明天”
+      // 时区安全锁：即使 Gemini 生成的 UTC 日期跨天变成了“明天”
       // 只要该文章日期不比当前时间晚 24 小时以上，就强制判定为“已发布”，绝不让它在前台失踪！
       return item.date.getTime() <= now.getTime() + 24 * 60 * 60 * 1000;
     });
