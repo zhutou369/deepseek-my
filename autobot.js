@@ -11,7 +11,6 @@ async function runAutoBot() {
     }
 
     // 从命令行参数中获取需要生成的文章篇数（例如 node autobot.js 5）
-    // 如果没有获取到参数，默认只生成 1 篇作为安全垫
     const args = process.argv.slice(2);
     let maxPosts = parseInt(args[0], 10) || 1;
     console.log(`🤖 收到发文指令，本次任务尝试批量生成: ${maxPosts} 篇文章`);
@@ -95,7 +94,7 @@ async function runAutoBot() {
             `;
         }
 
-        // 7. 构造终极 SEO Prompt 模板
+        // 7. 构造终极 SEO Prompt 模板（已完全适配新版 11ty 模板布局与标签）
         const prompt = `
     你是一个精通技术SEO和前沿网络技术的专家博主。请针对主题 "${currentTopic}" 撰写一篇深入、对用户有极高价值的原创文章。
     
@@ -108,12 +107,12 @@ async function runAutoBot() {
     title: "${currentTopic}"
     description: "针对${currentTopic}的专业技术解析与实操指南。"
     date: ${todayStr}
-    tags: ["posts", "SEO"]
-    layout: "layout.njk"
-    permalink: "/posts/${todayStr}-"你的纯英文短语"-${randomId}/index.html"
+    tags: ["posts"]
+    layout: "post.njk"
+    permalink: "/posts/${todayStr}-你的纯英文短语-${randomId}/index.html"
     ---
 
-    【注意】：请务必将上面 permalink 里面的 "你的纯英文短语" 替换为你真正翻译出来的英文 Slug。不要保留引号。
+    【注意】：请务必将上面 permalink 里面的 "你的纯英文短语" 替换为你真正翻译出来的英文 Slug。不要保留任何多余的引号或括号。
     ${imagePromptInstruction}
 
     这里开始写文章正文。请多用二级标题（##）、三级标题（###）对内容进行多层级切分，保证极佳的SEO可读性与结构性。
@@ -126,10 +125,13 @@ async function runAutoBot() {
                 contents: prompt,
             });
 
-            const articleContent = response.text;
+            let articleContent = response.text;
             if (!articleContent) {
                 throw new Error("Gemini 返回内容为空");
             }
+
+            // 🌟 安全增强：清洗可能由于 AI 理解偏差导致的 permalink 语法残留（例如多余的引号或中括号）
+            articleContent = articleContent.replace(/permalink:\s*["']?\/posts\/([^"'\n]+)["']?/g, 'permalink: "/posts/$1"');
 
             // 为了防止同秒内生成的 randomId 撞车，加上 currentLoop 索引增加唯一性
             const fileName = `${todayStr}-post-${randomId}-${currentLoop}.md`;
@@ -148,7 +150,7 @@ async function runAutoBot() {
         }
     }
 
-    // 🌟 【重构重点】：当所有的循环（如5次）全部执行完毕完毕后，再一次性回写成标准的 JSON 数组格式
+    // 当所有的循环全部执行完毕完毕后，再一次性回写成标准的 JSON 数组格式
     try {
         fs.writeFileSync(jsonPath, JSON.stringify(keywords, null, 2), 'utf-8');
         console.log(`\n📉 词库整体更新完毕！剩余可用关键词数: ${keywords.length}`);

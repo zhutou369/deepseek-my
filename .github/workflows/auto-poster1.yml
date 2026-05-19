@@ -16,8 +16,9 @@ on:
 # 🚀 2026 规范：在全局显式注入强制使用 Node 24 的环境变量
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: 'true'
+  TZ: 'Asia/Shanghai' # 🌟 新增：强制服务器时区为中国标准时间，防止 11ty 编译时出现日期跨天对不上
 
-# 🌟 核心修复点 1：显式在代码层面死死锁住“允许机器人反向写入仓库”的最高权限
+# 🌟 显式在代码层面死死锁住“允许机器人反向写入仓库”的最高权限
 permissions:
   contents: write
 
@@ -37,10 +38,18 @@ jobs:
       uses: actions/setup-node@v4
       with:
         node-version: '24'
+        cache: 'npm' # 自动缓存依赖，加速后续构建
 
-    # 3. 安装谷歌最新官方 AI SDK
-    - name: Install @google/genai
-      run: npm install @google/genai
+    # 3. 安装项目依赖与谷歌最新官方 AI SDK
+    - name: Install Dependencies
+      run: |
+        # 如果项目根目录有 package.json，则安装已有依赖；否则直接局部安装核心组件
+        if [ -f package.json ]; then
+          npm install
+        else
+          npm init -y
+        fi
+        npm install @google/genai @11ty/eleventy --save-dev
 
     # 4. 运行 Node 脚本：如果是定时运行，默认传入 5；如果是手动运行，则传入你填写的数字
     - name: Run Gemini Content Generator
@@ -48,7 +57,11 @@ jobs:
         GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
       run: node autobot.js ${{ github.event.inputs.post_count || '5' }}
 
-    # 5. 检查是否有新文章诞生，并推回 GitHub
+    # 5. 🌟 核心新增：执行 Eleventy 编译，将新生成的 Markdown 动态渲染为纯静态 HTML 网页
+    - name: Build Eleventy Site
+      run: npx @11ty/eleventy
+
+    # 6. 检查是否有新文章诞生，并推回 GitHub（包含生成的 posts 和编译后的 _site 静态页面）
     - name: Commit and Push Changes back to Repo
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -58,12 +71,12 @@ jobs:
         
         git add .
         
-        # 检查是否有代码改变（包括 keywords.json 的减少和 posts 内新 md 的增加）
+        # 检查是否有代码改变（包括 keywords.json 的减少、posts 内新 md 的增加以及 _site 网页的更新）
         if ! git diff --cached --quiet; then
-          git commit -m "🤖 [Bot] 自动同步/手动测试：批量更新文章并同步词库"
-          # 必须带着特权临时 Token 强制安全推回 main 分支
+          git commit -m "🤖 [Bot] 自动同步/手动测试：批量更新文章、重新编译全站并同步词库"
+          # 带着特权临时 Token 强制安全推回 main 分支
           git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git HEAD:main
-          echo "✅ 成功反向将新文章与更新后的词库同步回 GitHub 仓库！"
+          echo "✅ 成功反向将新文章、编译后的静态网页与更新后的词库同步回 GitHub 仓库！"
         else
           echo "⚠️ 检查发现本地文件无任何变化，本次自动跳过推送。"
         fi

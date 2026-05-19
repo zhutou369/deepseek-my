@@ -4,8 +4,8 @@ module.exports = function (eleventyConfig) {
   eleventyConfig.addPassthroughCopy("css");
   eleventyConfig.addPassthroughCopy("images.txt");
 
-  // 2. 核心修复：注册 blog 文章集合，并增加极致的时区与未来发布容错
-  eleventyConfig.addCollection("blog", function (collectionApi) {
+  // 2. 核心修复：注册 posts 文章集合（与模板中 collections.posts 完全对齐），并增加极致的时区与未来发布容错
+  eleventyConfig.addCollection("posts", function (collectionApi) {
     return collectionApi.getFilteredByGlob("posts/*.md").filter((item) => {
       // 如果文章没有写日期，直接放行
       if (!item.date) return true;
@@ -19,7 +19,13 @@ module.exports = function (eleventyConfig) {
     });
   });
 
-  // 3. 注册标准的时间格式化过滤器（用于列表页和详情页优雅显示 yyyy-mm-dd）
+  // 3. 新增：注册首页专用的 limit 过滤器
+  eleventyConfig.addFilter("limit", function (arr, limit) {
+    if (!Array.isArray(arr)) return [];
+    return arr.slice(0, limit);
+  });
+
+  // 4. 注册标准的时间格式化过滤器（用于列表页和详情页优雅显示 yyyy-mm-dd）
   eleventyConfig.addFilter("dateFilter", function (dateValue) {
     if (!dateValue) return "";
     const d = new Date(dateValue);
@@ -29,11 +35,11 @@ module.exports = function (eleventyConfig) {
     return `${year}-${month}-${day}`;
   });
 
-  // 4. 配置输入输出目录
+  // 5. 配置输入输出目录
   return {
     dir: {
       input: ".",
-      includes: "_includes",
+      includes: "_includes", // 对应根目录下的 _includes 文件夹
       output: "_site",
     },
     templateFormats: ["md", "njk", "html"],
