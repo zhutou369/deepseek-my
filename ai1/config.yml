@@ -2,7 +2,7 @@ backend:
   name: github
   repo: zhutou369/deepseek-chat
   branch: main
-  base_url: https://deepseek-chat-f27.pages.dev/
+  base_url: https://rough-pine-de1b.zhutou757.workers.dev
   auth_endpoint: auth
 
 # 媒体库配置（已规范至 static 公共资源目录，防止 11ty 编译时丢失图片）
