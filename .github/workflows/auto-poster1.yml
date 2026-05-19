@@ -1,24 +1,25 @@
 name: Gemini Auto Content Updater
 
 on:
-  # 🎯 保持定时触发：每天北京时间早上 10:01 自动触发更新 (10:01 AM HKT = 2:01 AM UTC)
+  # 🎯 核心修正：每天北京/香港時間早上 08:12 自動觸發更新
+  # 計算公式：香港時間 08:12 AM = 世界標準時間 (UTC) 00:12 AM
   schedule:
-    - cron: '01 2 * * *'
+    - cron: '12 0 * * *'
 
-  # 🎯 手动测试触发：允许在 GitHub 界面手动点击按钮，并配置可输入的数字选项
+  # 🎯 手動測試觸發：允許在 GitHub 介面手動點擊按鈕，並配置可輸入的數字選項
   workflow_dispatch:
     inputs:
       post_count:
-        description: '本次手动测试生成的文章数量（如输入 3 或 5）'
+        description: '本次手動測試生成的文章數量（如輸入 3 或 5）'
         required: true
-        default: '5' # 手动测试时默认是一次更新 5 篇
+        default: '5' # 手動測試時默認是一次更新 5 篇
 
-# 🚀 2026 规范：在全局显式注入强制使用 Node 24 的环境变量
+# 🚀 2026 規範：在全局顯式注入強制使用 Node 24 的環境變量
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: 'true'
-  TZ: 'Asia/Shanghai' # 🌟 新增：强制服务器时区为中国标准时间，防止 11ty 编译时出现日期跨天对不上
+  TZ: 'Asia/Hong_Kong' # 🌟 優化：強制伺服器時區為香港標準時間，確保與你的站群完全對齊
 
-# 🌟 显式在代码层面死死锁住“允许机器人反向写入仓库”的最高权限
+# 🌟 顯式在代碼層面死死鎖住“允許機器人反向寫入倉庫”的最高權限
 permissions:
   contents: write
 
@@ -27,43 +28,42 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    # 1. 检出 11ty 项目的全部源码
+    # 1. 檢出 11ty 項目的全部源碼
     - name: Checkout Repository
       uses: actions/checkout@v4
       with:
         fetch-depth: 0
 
-    # 2. 部署最新一代的 Node.js 24 生产环境（消除弃用警告）
+    # 2. 部署最新一代的 Node.js 24 生產環境（消除棄用警告）
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
         node-version: '24'
-        cache: 'npm' # 自动缓存依赖，加速后续构建
+        cache: 'npm' # 自動緩存依賴，加速後續構建
 
-    # 3. 安装项目依赖与谷歌最新官方 AI SDK
+    # 3. 安裝項目依賴與谷歌最新官方 AI SDK
     - name: Install Dependencies
       run: |
-        # 如果项目根目录有 package.json，则安装已有依赖；否则直接局部安装核心组件
         if [ -f package.json ]; then
           npm install
-        else
+        } else {
           npm init -y
         fi
         npm install @google/genai @11ty/eleventy --save-dev
 
-    # 4. 运行 Node 脚本：如果是定时运行，默认传入 5；如果是手动运行，则传入你填写的数字
+    # 4. 🌟 核心修正：如果是定時運行，傳入 '1'（即每天早上 8:12 只發 1 篇）；如果是手動觸發，則認你填寫的數字
     - name: Run Gemini Content Generator
       env:
         GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-      run: node autobot.js ${{ github.event.inputs.post_count || '5' }}
+      run: node autobot.js ${{ github.event.inputs.post_count || '1' }}
 
-    # 5. 🌟 权限修复重构版：强制解锁 node_modules 可执行特权，阻断 Exit code 127 碎版错误
+    # 5. 權限修復重構版：強制解鎖 node_modules 可執行特權，阻斷 Exit code 127 碎版錯誤
     - name: Build Eleventy Site
       run: |
         chmod -R +x ./node_modules/.bin/
         npx @11ty/eleventy
 
-    # 6. 检查是否有新文章诞生，并推回 GitHub（包含生成的 posts 和编译后的 _site 静态页面）
+    # 6. 檢查是否有新文章誕生，並推回 GitHub（包含生成的 posts 和編譯後的 _site 靜態頁面）
     - name: Commit and Push Changes back to Repo
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -73,12 +73,12 @@ jobs:
         
         git add .
         
-        # 检查是否有代码改变（包括 keywords.json 的减少、posts 内新 md 的增加以及 _site 网页的更新）
+        # 檢查是否有代碼改變（包括 keywords.json 的減少、posts 內新 md 的增加以及 _site 網頁的更新）
         if ! git diff --cached --quiet; then
-          git commit -m "🤖 [Bot] 自动同步/手动测试：批量更新文章、修复权限并重新编译全站同步词库"
-          # 带着特权临时 Token 强制安全推回 main 分支
+          git commit -m "🤖 [Bot] 自動同步/手動測試：批量更新文章、修復權限並重新編譯全站同步詞庫"
+          # 帶著特權臨時 Token 強制安全推回 main 分支
           git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git HEAD:main
-          echo "✅ 成功反向将新文章、编译后的静态网页与更新后的词库同步回 GitHub 仓库！"
+          echo "✅ 成功反向將新文章、編譯後的靜態網頁與更新後的詞庫同步回 GitHub 倉庫！"
         else
-          echo "⚠️ 检查发现本地文件无任何变化，本次自动跳过推送。"
+          echo "⚠️ 檢查發現本地文件無任何變化，本次自動跳過推送。"
         fi
