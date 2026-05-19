@@ -5,16 +5,38 @@ layout: layouts/base.njk
   <header class="post-content-header">
     <h1>{{ title }}</h1>
     <div class="post-content-meta">
-      <span>發布日期：{{ date | dateFilter }}</span>
+      <span>發布日期：{{ date | dateFilter }}</span> [cite: 12]
       <span>分類：DeepSeek 核心技術專題</span>
       <span>讀者對象：香港開發者及企業決策層</span>
     </div>
   </header>
 
   <section class="post-body-markdown">
-    {{ content | safe }}
+    {{ content | safe }} 
   </section>
   
+  <div class="post-pagination-nav" style="margin: 40px 0 20px 0; padding: 20px; background: #f9f9f9; border-radius: 6px; border-left: 4px solid #333;">
+    <ul style="list-style: none; padding: 0; margin: 0; line-height: 2;">
+      {%- set previousPost = collections.posts | getPreviousCollectionItem(page) %}
+      {%- set nextPost = collections.posts | getNextCollectionItem(page) %}
+
+      <li><strong>&larr; 上一篇：</strong>
+        {% if previousPost %}
+          <a href="{{ previousPost.url }}" style="color: #0066cc; text-decoration: none;">{{ previousPost.data.title }}</a>
+        {% else %}
+          <span style="color: #999;">已經是最新一篇技術文章了</span>
+        {% endif %}
+      </li>
+      <li><strong>&rarr; 下一篇：</strong>
+        {% if nextPost %}
+          <a href="{{ nextPost.url }}" style="color: #0066cc; text-decoration: none;">{{ nextPost.data.title }}</a>
+        {% else %}
+          <span style="color: #999;">敬請期待下一期技術專題更新</span>
+        {% endif %}
+      </li>
+    </ul>
+  </div>
+
   <footer class="post-content-footer">
     <div class="inner-navigation">
       <p><strong>站內導航閉環：</strong></p>
