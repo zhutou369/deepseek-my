@@ -123,7 +123,7 @@ async function runAutoBot() {
             console.log('正在連接 Gemini API 生產高質量繁體內容...');
             // 🌟 升級 Paid 階層專享的最新一代 Gemini 3 Flash 模型
             const response = await ai.models.generateContent({
-                model: 'gemini-3-flash',
+                model: 'gemini-2.5-flash',
                 contents: prompt,
             });
 
