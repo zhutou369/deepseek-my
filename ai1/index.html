@@ -3,13 +3,13 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>DeepSeek 站长后台管理系统</title>
+  <title>DeepSeek 站长管理后台</title>
 </head>
 <body>
   <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
 
   <script>
-    // 强制初始化本地配置，让 CMS 绕过远程 config.yml 加载步骤
+    // 强制初始化本地配置，让 CMS 绕过对外部 config.yml 的请求
     window.CMS_CONFIG = {
       backend: {
         name: "github",
