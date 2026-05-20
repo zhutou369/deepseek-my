@@ -1,40 +1,23 @@
 module.exports = function (eleventyConfig) {
-  // 1. 🌟 靜態資源搬運：將所有資源複製路徑全部對齊 src/ 開頭
   eleventyConfig.addPassthroughCopy("src/css");
   eleventyConfig.addPassthroughCopy("src/static");
   eleventyConfig.addPassthroughCopy("src/images.txt");
   eleventyConfig.addPassthroughCopy("src/ai1"); 
 
-  // 2. 🌟 註冊全量文章集合：精準掃描 src/posts/ 目錄下的所有 .md 檔案
   eleventyConfig.addCollection("posts", function (collectionApi) {
-    return collectionApi.getFilteredByGlob("src/posts/*.md").sort((a, b) => {
-      return b.date - a.date; // 最新發布與更新的文章會自動排在最前面
-    });
+    return collectionApi.getFilteredByGlob("src/posts/*.md").sort((a, b) => b.date - a.date);
   });
 
-  // 3. 🌟 註冊首頁及側邊欄專用的 limit 限制過濾器
-  eleventyConfig.addFilter("limit", function (arr, limit) {
-    if (!Array.isArray(arr)) return [];
-    return arr.slice(0, limit);
-  });
+  eleventyConfig.addFilter("limit", (arr, limit) => arr.slice(0, limit));
 
-  // 4. 🌟 註冊繁體香港標準時間格式化過濾器 (渲染格式：YYYY年MM月DD日)
+  // 🌟 马来西亚标准日期格式
   eleventyConfig.addFilter("dateFilter", function (dateValue) {
     if (!dateValue) return "";
-    const d = new Date(dateValue);
-    const year = d.getFullYear();
-    const month = String(d.getMonth() + 1).padStart(2, '0');
-    const day = String(d.getDate()).padStart(2, '0');
-    return `${year}年${month}月${day}日`;
+    return new Intl.DateTimeFormat('ms-MY', { day: 'numeric', month: 'long', year: 'numeric' }).format(new Date(dateValue));
   });
 
-  // 5. 🌟 核心路徑與沙盒沙箱配置：以 "src" 作為開發根目錄
   return {
-    dir: {
-      input: "src",
-      includes: "_includes", // 對應 src/_includes/ 檔案夾
-      output: "_site",       // 打包編譯後的靜態網頁輸出目錄
-    },
+    dir: { input: "src", includes: "_includes", output: "_site" },
     templateFormats: ["md", "njk", "html"],
     markdownTemplateEngine: "njk",
     htmlTemplateEngine: "njk",

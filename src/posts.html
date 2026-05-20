@@ -1,0 +1,27 @@
+---
+layout: layouts/base.njk
+title: Arkib Pengetahuan DeepSeek Malaysia
+pagination:
+  data: collections.posts
+  size: 10
+  alias: posts
+permalink: "posts/{% if pagination.pageNumber > 0 %}page-{{ pagination.pageNumber + 1 }}/{% endif %}index.html"
+---
+<div class="container" style="padding: 40px 0;">
+    <h1 style="color: var(--primary);">Semua Tutorial & Berita</h1>
+    {% for post in posts %}
+        <div style="margin-bottom: 30px;">
+            <h3><a href="{{ post.url }}">{{ post.data.title }}</a></h3>
+            <p>{{ post.data.description }}</p>
+            <span style="font-size: 12px; color: #999;">{{ post.date | dateFilter }}</span>
+        </div>
+    {% endfor %}
+
+    <nav style="text-align: center; margin-top: 50px;">
+        {% if pagination.href.previous %}<a href="{{ pagination.href.previous }}">« Kembali</a>{% endif %}
+        {% for pageEntry in pagination.pages %}
+            <a href="{{ pagination.hrefs[loop.index0] }}" style="margin: 0 10px; font-weight: {{ 'bold' if page.url == pagination.hrefs[loop.index0] else 'normal' }};">{{ loop.index }}</a>
+        {% endfor %}
+        {% if pagination.href.next %}<a href="{{ pagination.href.next }}">Seterusnya »</a>{% endif %}
+    </nav>
+</div>

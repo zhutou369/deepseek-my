@@ -7,7 +7,7 @@ backend:
 >>>>>>> Stashed changes
   branch: main
   # 🌟 鎖死你成功跑通的 Cloudflare Worker 認證網關
-  base_url: https://wild-thunder-bd50.http2019http.workers.dev/
+  base_url: https://fragrant-surf-290f.http2019http.workers.dev/
   # 🌟 核心修正：補齊標準的斜槓授權路由
   auth_endpoint: /auth
 

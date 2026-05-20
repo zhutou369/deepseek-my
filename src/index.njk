@@ -1,108 +1,49 @@
 ---
 layout: layouts/base.njk
-title: DeepSeek 智能一號核心樞紐 - 全球 AI 技術分發與跨境提效中心
-description: 專注於 DeepSeek 推理模型的一號核心節點佈局。提供 2026 最新官方登入入口、API 多節點負載均衡配置及跨境站群自動化發文機器人技術閉環。
+title: DeepSeek Malaysia - Pusat AI & Transformasi Digital Terkemuka
+description: Panduan rasmi DeepSeek di Malaysia. Kami membantu syarikat tempatan mengintegrasikan model AI DeepSeek-R1 untuk meningkatkan kecekapan perniagaan.
 ---
-
 <style>
-  /* Hero Banner */
-  .hero-banner { background: var(--soft-bg); padding: 80px 0; border-bottom: 1px solid #e2e8f0; text-align: center; }
-  .hero-banner p { font-size: 18px; color: #64748b; max-width: 750px; margin: 25px auto; }
-  .main-h1 { font-size: 38px; color: var(--text-dark); margin: 0; line-height: 1.2; }
-
-  /* 深度描述區 */
-  .core-vision { padding: 80px 0; background: #fff; }
-  .vision-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 50px; align-items: center; }
-  @media (max-width: 768px) { .vision-grid { grid-template-columns: 1fr; } }
-  .vision-text h2 { font-size: 28px; color: var(--main-indigo); margin-bottom: 20px; }
-  .vision-img img { width: 100%; border-radius: 12px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); }
-
-  /* 六宮格矩陣 */
-  .matrix-section { padding: 80px 0; background: var(--soft-bg); }
-  .matrix-h2 { text-align: center; margin-bottom: 50px; font-size: 30px; }
-  .grid-6 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; }
-  .grid-card { background: #fff; padding: 35px; border-radius: 15px; border: 1px solid #e2e8f0; transition: 0.3s; }
-  .grid-card:hover { transform: translateY(-8px); border-color: var(--main-indigo); box-shadow: 0 10px 25px rgba(67, 56, 202, 0.08); }
-  .grid-card h3 { font-size: 19px; color: var(--main-indigo); margin-top: 0; }
-  .grid-card p { font-size: 14px; color: #4b5563; margin-bottom: 0; line-height: 1.6; }
-
-  /* 文章板塊 */
-  .home-posts { padding: 80px 0; }
-  .post-item-simple { display: flex; justify-content: space-between; align-items: center; padding: 20px 0; border-bottom: 1px solid #f1f5f9; }
-  .post-item-simple a { font-size: 18px; color: var(--text-dark); text-decoration: none; font-weight: 600; }
-  .post-item-simple a:hover { color: var(--main-indigo); }
-  .post-date { font-size: 13px; color: #94a3b8; }
+    .hero { background: var(--bg); padding: 100px 0; text-align: center; border-bottom: 1px solid #ddd; }
+    .hero h2 { font-size: 42px; color: var(--primary); }
+    .grid-6 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin: 60px 0; }
+    .grid-card { padding: 30px; border: 1px solid #eee; border-radius: 10px; background: #fff; transition: 0.3s; }
+    .grid-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
+    .grid-card h3 { color: var(--primary); margin-top: 0; }
+    .long-desc { line-height: 2; font-size: 18px; margin: 60px 0; color: #444; }
+    .post-list-home { border-top: 2px solid var(--primary); padding-top: 40px; }
 </style>
 
-<section class="hero-banner">
-  <div class="container">
-    {# 首頁唯一 H1 #}
-    <h2 class="main-h1">一號樞紐：鏈接全球 DeepSeek 智慧生態</h2>
-    <p>我們作為 **DeepSeek 一號核心節點**，致力於為亞太及全球站長提供最穩定的模型分發技術與跨境 SEO 流量獲取方案。在數據大航海時代，我們是您 AI 工具箱中最堅固的基石。</p>
-    <div style="margin-top: 30px;">
-       <a href="/posts/" style="background: var(--main-indigo); color:#fff; padding: 12px 30px; border-radius: 6px; text-decoration:none; font-weight:bold;">探索技術檔案庫</a>
+<section class="hero">
+    <div class="container">
+        <h2>Pusat Inovasi DeepSeek Malaysia</h2>
+        <p>Memperkasa perniagaan Malaysia dengan teknologi AI sumber terbuka yang paling berkuasa di dunia.</p>
     </div>
-  </div>
 </section>
 
-<section class="core-vision">
-  <div class="container vision-grid">
-    <div class="vision-text">
-      <h2>超越模型本身：構建技術閉環</h2>
-      <p>目前許多用戶在使用 DeepSeek 時，僅僅停留在簡單的網頁對話層面。作為「智能一號核心樞紐」，我們倡導的是**「模型 + 自動化 + 流量」**的完整閉環。</p>
-      <p>通過自研的 Gemini 自動化發文機器人 `autobot.js`，我們成功實現了在 GitHub 雲端無人值守的高頻發佈。這不僅僅是內容的生成，更是對搜尋引擎抓取頻率、頁面權重分佈、以及 H1 標籤精密管理的極致優化。</p>
-    </div>
-    <div class="vision-img">
-      <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=800" alt="科技藍圖與樞紐中心">
-    </div>
-  </div>
-</section>
-
-<section class="matrix-section">
-  <div class="container">
-    <h2 class="matrix-h2">六大核心技術支柱</h2>
+<div class="container">
     <div class="grid-6">
-      <div class="grid-card">
-        <h3>📍 掃碼登入安全性優化</h3>
-        <p>提供 2026 官方權威登入指南，解決多設備多開與獨立純淨 IP 配置難題，徹底杜絕因網環境波動導致的號源風控問題。</p>
-      </div>
-      <div class="grid-card">
-        <h3>⚡ API 負載均衡架構</h3>
-        <p>詳解如何在高併發請求下，利用異步呼叫與多執行緒並發流控，攻克官方閘道高載報錯 503 的通訊瓶頸。</p>
-      </div>
-      <div class="grid-card">
-        <h3>📦 站群自動化發佈閉環</h3>
-        <p>基於 Eleventy 與 GitHub Actions 的極速部署方案。實現每日自動彈出關鍵字、自動配給插圖、自動生成繁體 SEO 爆款文案。</p>
-      </div>
-      <div class="grid-card">
-        <h3>🎨 前端樣式防溢出技術</h3>
-        <p>獨創 word-break 換行機制與 Markdown 圍欄清洗技術，確保 AI 生成的長代碼與連結在手機端與電腦端均能百分之百不破版呈現。</p>
-      </div>
-      <div class="grid-card">
-        <h3>📊 矩陣交叉內鏈策略</h3>
-        <p>揭秘 deepseek-chat、hk-deepseek 等 5 大域名如何通過不重複錨文本進行權重對衝，打造搜尋引擎眼中的權威站群聯盟。</p>
-      </div>
-      <div class="grid-card">
-        <h3>🌐 港台在地化語意微調</h3>
-        <p>專注於繁體正體中文優化。多用「教學、優化、中小企、數字轉型」等高 Impression 關鍵字，精準捕獲 Google 海外華人流量。</p>
-      </div>
+        <div class="grid-card"><h3>⚡ Integrasi API Cepat</h3><p>Panduan lengkap menyambungkan DeepSeek API dengan sistem ERP dan CRM tempatan untuk automasi perniagaan tanpa gangguan.</p></div>
+        <div class="grid-card"><h3>🔒 Keselamatan Data</h3><p>Penyelesaian hos kendiri (private hosting) untuk memastikan data sensitif syarikat anda kekal di dalam kedaulatan Malaysia.</p></div>
+        <div class="grid-card"><h3>🇲🇾 Sokongan Tempatan</h3><p>Kandungan dan tutorial yang dioptimumkan khas untuk Bahasa Melayu dan persekitaran rangkaian di Malaysia.</p></div>
+        <div class="grid-card"><h3>📈 SEO AI Pintar</h3><p>Gunakan DeepSeek untuk menjana kandungan SEO yang berkualiti tinggi dan mesra algoritma Google untuk pasaran Asia Tenggara.</p></div>
+        <div class="grid-card"><h3>🛠️ Latihan PKS</h3><p>Modul latihan khas untuk Perusahaan Kecil dan Sederhana (PKS) bagi memahami potensi AI dalam pengurangan kos operasi.</p></div>
+        <div class="grid-card"><h3>🚀 Prestasi R1</h3><p>Analisis mendalam model DeepSeek-R1 dalam menyelesaikan masalah logik dan matematik yang kompleks.</p></div>
     </div>
-  </div>
-</section>
 
-<section class="home-posts">
-  <div class="container">
-    <h2 style="font-size: 26px; border-left: 5px solid var(--main-indigo); padding-left: 15px; margin-bottom: 40px;">🔥 樞紐實時技術動態</h2>
-    <div class="post-list-wrapper">
-      {% for post in collections.posts | limit(5) %}
-        <article class="post-item-simple">
-          <a href="{{ post.url }}">{{ post.data.title }}</a>
-          <span class="post-date">{{ post.date | dateFilter }}</span>
-        </article>
-      {% endfor %}
-    </div>
-    <div style="margin-top: 40px; text-align: center;">
-      <a href="/posts/" style="color: var(--main-indigo); font-weight: bold; text-decoration: none;">查看全量一號存檔 &raquo;</a>
-    </div>
-  </div>
-</section>
+    <article class="long-desc">
+        <h3>Mengapa DeepSeek Pilihan Utama Syarikat Malaysia?</h3>
+        <p>Di Malaysia, transformasi digital bukan lagi satu pilihan tetapi keperluan. **DeepSeek Malaysia Hub** komited untuk menyediakan jambatan teknikal antara model AI canggih dan aplikasi praktikal harian. Berbeza dengan model AI lain yang mahal, DeepSeek menawarkan prestasi setanding pada kos yang jauh lebih rendah, menjadikannya sangat sesuai untuk ekosistem perniagaan di Kuala Lumpur, Selangor, dan seluruh negara.</p>
+        <p>Kami menyediakan dokumentasi teknikal yang merangkumi konfigurasi pelayan tempatan, pengoptimuman kelajuan rangkaian melalui CDN Malaysia, dan teknik kejuruteraan prompt (prompt engineering) dalam konteks budaya tempatan.</p>
+    </article>
+
+    <section class="post-list-home">
+        <h3>🔥 Kemas Kini Terkini (Malaysia)</h3>
+        {% for post in collections.posts | limit(5) %}
+            <div style="padding: 15px 0; border-bottom: 1px solid #f0f0f0;">
+                <a href="{{ post.url }}" style="font-size: 18px; font-weight: bold; color: var(--primary); text-decoration: none;">{{ post.data.title }}</a>
+                <p style="margin: 5px 0; font-size: 14px; color: #999;">Diterbitkan pada: {{ post.date | dateFilter }}</p>
+            </div>
+        {% endfor %}
+    </section>
+</div>
