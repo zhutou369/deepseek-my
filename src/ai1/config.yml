@@ -1,9 +1,9 @@
 backend:
   name: github
-  repo: zhutou369/deepseek-in
+  repo: zhutou369/deepseek-1
   branch: main
   # 🌟 鎖死你成功跑通的 Cloudflare Worker 認證網關
-  base_url: https://shrill-king-461b.zhutou757.workers.dev
+  base_url: https://wild-thunder-bd50.http2019http.workers.dev/
   # 🌟 核心修正：補齊標準的斜槓授權路由
   auth_endpoint: /auth
 
