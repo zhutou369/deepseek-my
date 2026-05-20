@@ -1,6 +1,10 @@
 backend:
   name: github
+<<<<<<< Updated upstream
   repo: zhutou369/deepseek-1
+=======
+  repo: zhutou369/deepseek-in
+>>>>>>> Stashed changes
   branch: main
   # 🌟 鎖死你成功跑通的 Cloudflare Worker 認證網關
   base_url: https://wild-thunder-bd50.http2019http.workers.dev/

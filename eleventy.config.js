@@ -1,10 +1,13 @@
 module.exports = function (eleventyConfig) {
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
   // 1. 🌟 靜態資源搬運：將所有資源複製路徑全部對齊 src/ 開頭
   eleventyConfig.addPassthroughCopy("src/css");
   eleventyConfig.addPassthroughCopy("src/static");
   eleventyConfig.addPassthroughCopy("src/images.txt");
 =======
+=======
+>>>>>>> Stashed changes
   // 1. 將所有靜態資源複製路徑全部對齊 src/ 開頭
   eleventyConfig.addPassthroughCopy("src/css");
   eleventyConfig.addPassthroughCopy("src/static");
@@ -20,7 +23,11 @@ module.exports = function (eleventyConfig) {
   });
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
   // 3. 🌟 註冊首頁及存檔頁專用的 limit 限制過濾器（防止全量渲染導致首頁過長）
+=======
+  // 3. 註冊首頁及側邊欄專用的 limit 過濾器
+>>>>>>> Stashed changes
 =======
   // 3. 註冊首頁及側邊欄專用的 limit 過濾器
 >>>>>>> Stashed changes
