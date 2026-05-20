@@ -1,6 +1,6 @@
 backend:
   name: github
-  repo: zhutou369/deepseek-chat
+  repo: zhutou369/deepseek-in
   branch: main
   base_url: https://rough-pine-de1b.zhutou757.workers.dev
   auth_endpoint: auth

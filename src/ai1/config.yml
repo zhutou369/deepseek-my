@@ -1,6 +1,6 @@
 backend:
   name: github
-  repo: zhutou369/hk-deepseek
+  repo: zhutou369/deepseek-in
   branch: main
   # 🌟 鎖死你成功跑通的 Cloudflare Worker 認證網關
   base_url: https://young-tree-51fd.zhutou757.workers.dev
