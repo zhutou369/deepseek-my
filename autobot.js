@@ -15,7 +15,6 @@ async function runAutoBot() {
 
     const ai = new GoogleGenAI({ apiKey: apiKey });
     
-    // 🌟 修复并保持你的目录设计，移至正确的开发路径
     const jsonPath = path.join(__dirname, 'src', 'keywords.json');   
     const imagesPath = path.join(__dirname, 'src', 'images.txt'); 
     
@@ -38,7 +37,6 @@ async function runAutoBot() {
         const todayStr = new Date().toISOString().split('T')[0];
         const randomId = Math.floor(100 + Math.random() * 900);
 
-        // 🌟 核心修正：严格限死 AI 生成的标语及标题长度，防止拼装后超长引发 SEO 警告
         const prompt = `
     Tulis satu artikel tutorial teknikal yang mendalam dan asli tentang topik: "${currentTopic}".
     
@@ -66,13 +64,53 @@ async function runAutoBot() {
     * Struktur tajuk bahagian dalam badan artikel mestilah bermula dengan H2 (##) diikuti H3 (###).
         `;
 
-        try {
-            console.log(`Menghubungi Gemini API untuk artikel ${currentLoop + 1}...`);
-            const response = await ai.models.generateContent({
-                model: 'gemini-2.5-flash',
-                contents: prompt,
-            });
+        // ==========================================
+        // 🌟 核心修复：智能防拥堵自动重试逻辑 (应对 503/429 错误)
+        // ==========================================
+        let response;
+        let retryCount = 0;
+        const maxRetries = 3;
+        const delay = (ms) => new Promise(res => setTimeout(res, ms));
 
+        while (retryCount < maxRetries) {
+            try {
+                console.log(`Menghubungi Gemini API... (Percubaan ke-${retryCount + 1})`);
+                
+                response = await ai.models.generateContent({
+                    model: 'gemini-2.5-flash',
+                    contents: prompt,
+                });
+
+                if (response && response.text) {
+                    break; // 成功拿到数据，跳出重试循环
+                } else {
+                    throw new Error("Gemini returned empty response");
+                }
+            } catch (error) {
+                retryCount++;
+                const errMsg = error.message.toLowerCase();
+                
+                // 如果是服务忙碌(503)或触发限流(429)，且没超过最大重试次数，则等待后重试
+                if (errMsg.includes('503') || errMsg.includes('unavailable') || errMsg.includes('429')) {
+                    if (retryCount < maxRetries) {
+                        console.warn(`⚠️ Server Gemini sibuk (503/429). Menunggu 5 saat sebelum cuba semula...`);
+                        await delay(5000); 
+                    }
+                } else {
+                    // 如果是其他致命错误（如API Key失效、语法错误等），不重试直接抛出
+                    throw error;
+                }
+            }
+        }
+
+        if (!response || !response.text) {
+            console.error(`❌ Gagal menjana artikel selepas ${maxRetries} kali cubaan disebabkan kesesakan server. Kata kunci dikembalikan ke dalam senarai.`);
+            keywords.unshift(currentTopic); // 任务失败，把关键词塞回队列头部
+            continue; 
+        }
+        // ==========================================
+
+        try {
             let articleContent = response.text;
             const fileName = `${todayStr}-post-${randomId}-${currentLoop}.md`;
             const outputDir = path.join(__dirname, 'src', 'posts'); 
@@ -81,12 +119,11 @@ async function runAutoBot() {
             fs.writeFileSync(path.join(outputDir, fileName), articleContent, 'utf-8');
             console.log(`✅ Artikel berjaya dicipta: ${fileName}`);
         } catch (error) {
-            console.error(`❌ Gagal menjana artikel:`, error.message);
-            keywords.unshift(currentTopic); // Kembalikan kata kunci jika gagal
+            console.error(`❌ Gagal menyimpan artikel:`, error.message);
+            keywords.unshift(currentTopic); 
         }
     }
 
-    // Kemas kini json keywords
     fs.writeFileSync(jsonPath, JSON.stringify(keywords, null, 2), 'utf-8');
     console.log(`📉 Selesai! Baki kata kunci: ${keywords.length}`);
 }
