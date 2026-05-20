@@ -1,0 +1,107 @@
+---
+layout: layouts/base.njk
+title: 所有 DeepSeek 技術文章與應用教學檔案庫
+description: 瀏覽所有關於 DeepSeek (深度求索) 的繁體中文技術指南、API 整合方案、提示詞優化技巧及香港本地數字轉型精選案例。
+# 🌟 核心分頁機制：10 篇一頁
+pagination:
+  data: collections.posts
+  size: 10
+  alias: posts
+  reverse: true # 最新更新的文章永遠排在第一頁最上面
+# 🌟 標準分頁路由過渡
+permalink: "/posts/{% if pagination.pageNumber > 0 %}page-{{ pagination.pageNumber + 1 }}/{% endif %}index.html"
+---
+
+<style>
+  .archive-header { padding: 30px 0; border-bottom: 1px solid #eee; margin-bottom: 30px; }
+  .archive-header h1 { font-size: 28px; color: #111; margin: 0 0 10px 0; }
+  .archive-header p { color: #666; margin: 0; }
+  
+  .archive-card { padding: 25px; border: 1px solid #e1e4e8; border-radius: 8px; margin-bottom: 25px; background: #fff; }
+  .archive-card h2 { font-size: 22px; margin-top: 0; margin-bottom: 10px; }
+  .archive-card h2 a { text-decoration: none; color: #111; }
+  .archive-card h2 a:hover { color: #0052cc; }
+  .archive-date { font-size: 14px; color: #999; margin-bottom: 12px; display: block; }
+  .archive-excerpt { font-size: 15px; color: #555; line-height: 1.6; }
+
+  .layout-grid { display: grid; grid-template-columns: 17fr 7fr; gap: 40px; margin: 20px 0; }
+  @media (max-width: 768px) { .layout-grid { grid-template-columns: 1fr; } }
+
+  .sidebar-panel { border: 1px solid #e1e4e8; border-radius: 8px; padding: 20px; background: #fff; }
+  .sidebar-panel h3 { margin-top: 0; font-size: 18px; border-left: 4px solid #0052cc; padding-left: 10px; margin-bottom: 15px; }
+  .sidebar-list { list-style: none; padding: 0; margin: 0; }
+  .sidebar-list li { padding: 8px 0; border-bottom: 1px dashed #eee; }
+  .sidebar-list a { text-decoration: none; color: #333; font-size: 14px; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .sidebar-list a:hover { color: #0052cc; }
+  
+  .pagination-nav { display: flex; justify-content: center; gap: 8px; list-style: none; padding: 0; margin: 40px 0; }
+  .pagination-nav a { padding: 8px 16px; border: 1px solid #ddd; text-decoration: none; color: #0052cc; border-radius: 4px; }
+  .pagination-nav .active-page { padding: 8px 16px; background: #333; color: #fff; border: 1px solid #333; border-radius: 4px; font-weight: bold; }
+  .pagination-nav span.disabled { padding: 8px 16px; border: 1px solid #eee; color: #ccc; border-radius: 4px; }
+</style>
+
+<div class="archive-header">
+  {# 🌟 H1 衝突修復：列表頁獨享其專屬的 H1 大標題，與 Logo 標籤完美分開 #}
+  <h1>DeepSeek 繁體中文全量文章檔案庫</h1>
+  <p>這裏匯集了本站發布的所有關於 DeepSeek 模型的深度剖析、本地化私有部署、提示詞工程以及商業落地實踐指南。</p>
+</div>
+
+<div class="layout-grid">
+  <div class="main-content-area">
+    {% for post in posts %}
+      <article class="archive-card">
+        <span class="archive-date">發布時間：{{ post.date | dateFilter }}</span>
+        <h2><a href="{{ post.url }}">{{ post.data.title }}</a></h2>
+        <p class="archive-excerpt">{{ post.data.description }}</p>
+        <a href="{{ post.url }}" class="archive-link" style="color: #0052cc; text-decoration: none; font-size: 14px; font-weight: bold;">閱讀全文 &middot; 掌握核心技術</a>
+      </article>
+    {% else %}
+      <p>正在全力編撰精準內容中，請稍後回來查看。</p>
+    {% endfor %}
+
+    {% if pagination.pages.length > 1 %}
+      <nav aria-label="文章分頁導航">
+        <ul class="pagination-nav">
+          <li>
+            {% if pagination.href.previous %}
+              <a href="{{ pagination.href.previous }}">&laquo; 上一頁</a>
+            {% else %}
+              <span class="disabled">&laquo; 上一頁</span>
+            {% endif %}
+          </li>
+
+          {%- for pageEntry in pagination.pages %}
+            {% set pageNumber = loop.index0 %}
+            {% set pageHref = pagination.hrefs[pageNumber] %}
+            <li>
+              {% if page.url == pageHref %}
+                <span class="active-page">{{ loop.index }}</span>
+              {% else %}
+                <a href="{{ pageHref }}">{{ loop.index }}</a>
+              {% endif %}
+            </li>
+          {%- endfor %}
+
+          <li>
+            {% if pagination.href.next %}
+              <a href="{{ pagination.href.next }}">下一頁 &raquo;</a>
+            {% else %}
+              <span class="disabled">下一頁 &raquo;</span>
+            {% endif %}
+          </li>
+        </ul>
+      </nav>
+    {% endif %}
+  </div>
+
+  <aside class="sidebar-area">
+    <div class="sidebar-panel">
+      <h3>⚡ 實時情報更新</h3>
+      <ul class="sidebar-list">
+        {% for item in collections.posts | limit(5) %}
+          <li><a href="{{ item.url }}" title="{{ item.data.title }}">{{ item.data.title }}</a></li>
+        {% endfor %}
+      </ul>
+    </div>
+  </aside>
+</div>

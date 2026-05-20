@@ -10,7 +10,7 @@ async function runAutoBot() {
         return; 
     }
 
-    // 從命令列參數中獲取需要生成的文章篇數
+    // 從命令列參數中獲取需要生成的文章篇数
     const args = process.argv.slice(2);
     let maxPosts = parseInt(args[0], 10) || 1;
     console.log(`🤖 收到發文指令，本次任務嘗試批量生成: ${maxPosts} 篇文章`);
@@ -41,7 +41,6 @@ async function runAutoBot() {
         return;
     }
 
-    // 調整生成數量：如果輸入的數量大於詞庫剩餘詞量，以詞庫剩餘數量為準
     if (maxPosts > keywords.length) {
         console.log(`💡 提示：輸入的數量 ${maxPosts} 大於詞庫剩餘詞量 ${keywords.length}，將生成現存的全部文章。`);
         maxPosts = keywords.length;
@@ -51,7 +50,6 @@ async function runAutoBot() {
     for (let currentLoop = 0; currentLoop < maxPosts; currentLoop++) {
         console.log(`\n------------------ 正在處理第 ${currentLoop + 1} / ${maxPosts} 篇 ------------------`);
 
-        // 4. 提取並準備隨機圖片連結
         let selectedImages = [];
         if (fs.existsSync(imagesPath)) {
             try {
@@ -68,15 +66,13 @@ async function runAutoBot() {
                     selectedImages = [allImages[0], allImages[0]];
                 }
             } catch (e) {
-                console.error("⚠️ 讀取 images.txt 失敗，本篇生成將不帶插圖:", e.message);
+                console.error("⚠️ 讀取 images.txt 失败，本篇生成將不帶插圖:", e.message);
             }
         }
 
-        // 5. 彈出並消費第一個關鍵詞
         const currentTopic = keywords.shift();
         console.log(`當前推文選題確定: [ ${currentTopic} ]`);
 
-        // 🌟【終極修正】：手動提取香港時間的 年、月、日，死死拼裝成 11ty 唯一承認的 YYYY-MM-DD 國際標準！
         const now = new Date();
         const formatter = new Intl.DateTimeFormat('zh-HK', {
             timeZone: 'Asia/Hong_Kong',
@@ -89,10 +85,9 @@ async function runAutoBot() {
         const month = parts.find(p => p.type === 'month').value;
         const day = parts.find(p => p.type === 'day').value;
         
-        const todayStr = `${year}-${month}-${day}`; // 100% 輸出 2026-05-19，絕不翻車！
+        const todayStr = `${year}-${month}-${day}`; 
         const randomId = Math.floor(100 + Math.random() * 900); 
 
-        // 6. 構造圖片指導 Prompt
         let imagePromptInstruction = '';
         if (selectedImages.length === 2) {
             imagePromptInstruction = `
@@ -107,7 +102,7 @@ async function runAutoBot() {
             `;
         }
 
-        // 7. 構造終極 香港本地化 SEO Prompt 模板
+        // 🌟 終極 香港本地化 SEO Prompt 模板
         const prompt = `
     你是一個精通技術 SEO、網絡安全以及大模型基礎設施的香港本地權威科技博主。請針對主題 "${currentTopic}" 撰寫一篇深入、對用戶有極高價值、且全面使用【香港繁體中文】（zh-HK）的技術原創文章。
     
@@ -129,10 +124,11 @@ async function runAutoBot() {
     【注意】：請務必將上面 permalink 裡面的 "你的純英文短語" 换為你真正翻譯出來的英文 Slug。不要保留任何多餘的引號或括號。
     ${imagePromptInstruction}
 
+    5. ⚠️【特別限制】：嚴禁在正文的第一行或任何地方生成 # 標題（即一級的 <h1> 標籤）。文章正文必須直接從第一個二級標題（##）或引導段落開始撰寫，防止與母版外殼的標題產生 SEO 重複衝突。
+
     這裡開始寫文章正文。請多用二級標題（##）、三級標題（###）對內容進行多層級切分，保證極佳的 SEO 可讀性與結構性。
         `;
 
-        // 智能抗併發自動重試機制
         let response;
         let retryCount = 0;
         const maxRetries = 3;
@@ -200,4 +196,5 @@ async function runAutoBot() {
     }
 }
 
+// 🌟 核心修正：成對閉合函數，完美清除 Unexpected end of input 語法報錯
 runAutoBot();
