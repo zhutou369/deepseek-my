@@ -3,56 +3,74 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{{ title }} | DeepSeek 香港非官方中文情報站</title>
+  <title>{{ title }} | DeepSeek 全球產業應用整合</title>
   <meta name="description" content="{{ description }}">
-  <meta name="keywords" content="DeepSeek, DeepSeek香港, DeepSeek中文, AI大模型, 深度求索, DeepSeek教學, DeepSeek企業應用">
+  <meta name="keywords" content="DeepSeek, 產業集成, AI 數字轉型, 深度求索, 技術整合, API 方案, 全球化 AI">
   
-  <meta property="og:title" content="{{ title }} | DeepSeek 香港非官方中文情報站">
-  <meta property="og:description" content="{{ description }}">
-  <meta property="og:type" content="{{ 'article' if layout == 'layouts/post.njk' else 'website' }}">
-  <meta property="og:locale" content="zh_HK">
-  
-  <link rel="stylesheet" href="/css/style.css">
-  
+  <style>
+    :root { --primary: #06b6d4; --primary-dark: #0891b2; --bg-dark: #0f172a; --text-main: #334155; --border: #e2e8f0; }
+    body { font-family: 'Inter', -apple-system, sans-serif; line-height: 1.6; color: var(--text-main); margin: 0; padding: 0; background: #fff; }
+    .container { max-width: 1140px; margin: 0 auto; padding: 0 20px; }
+    
+    /* Header */
+    .site-header { border-bottom: 1px solid var(--border); padding: 25px 0; background: #fff; position: sticky; top: 0; z-index: 1000; }
+    .header-nav { display: flex; justify-content: space-between; align-items: center; }
+    .logo a { text-decoration: none; color: var(--bg-dark); font-weight: 800; font-size: 22px; letter-spacing: -0.5px; }
+    .logo div { font-weight: 800; font-size: 22px; color: var(--bg-dark); }
+    .nav-links { list-style: none; display: flex; gap: 30px; margin: 0; padding: 0; }
+    .nav-links a { text-decoration: none; color: #64748b; font-weight: 500; transition: 0.3s; }
+    .nav-links a:hover, .nav-links a.active { color: var(--primary); }
+
+    /* Footer & Friend Links */
+    .site-footer { background: #f8fafc; border-top: 1px solid var(--border); padding: 60px 0 30px; margin-top: 80px; }
+    .friend-section h4 { font-size: 16px; margin-bottom: 20px; color: var(--bg-dark); }
+    .friend-grid { display: flex; flex-wrap: wrap; gap: 15px 30px; border-bottom: 1px solid var(--border); padding-bottom: 30px; margin-bottom: 30px; }
+    .friend-grid a { text-decoration: none; color: #64748b; font-size: 14px; transition: 0.2s; }
+    .friend-grid a:hover { color: var(--primary); }
+    .copy { text-align: center; font-size: 13px; color: #94a3b8; }
+  </style>
+
+  {# 集成 51.la 統計 #}
   <script charset="UTF-8" id="LA_COLLECT" src="//sdk.51.la/js-sdk-pro.min.js"></script>
   <script>LA.init({id:"3K7l95Zodr0uFrIN",ck:"3K7l95Zodr0uFrIN"})</script>
 </head>
 <body>
 
   <header class="site-header">
-    <div class="container header-flex">
+    <div class="container header-nav">
+      {# H1 智慧管理：首頁使用 H1，內頁降級為 div #}
       {% if page.url == "/" %}
-        <h1 class="logo"><a href="/">DeepSeek 香港情報站</a></h1>
+        <h1 class="logo" style="margin:0;"><a href="/">DeepSeek 全球產業應用整合</a></h1>
       {% else %}
-        <div class="logo"><a href="/">DeepSeek 香港情報站</a></div>
+        <div class="logo"><a href="/">DeepSeek 全球產業應用整合</a></div>
       {% endif %}
-      <nav class="site-nav">
-        <ul>
-          <li><a href="/" {% if page.url == "/" %}class="active"{% endif %}>首頁</a></li>
-          <li><a href="/posts/" {% if page.url == "/posts/" %}class="active"{% endif %}>最新文章</a></li>
+      <nav>
+        <ul class="nav-links">
+          <li><a href="/" {% if page.url == "/" %}class="active"{% endif %}>智能集成首頁</a></li>
+          <li><a href="/posts/" {% if page.url.startsWith('/posts/') %}class="active"{% endif %}>技術檔案中心</a></li>
         </ul>
       </nav>
     </div>
   </header>
 
-  <main class="site-main container">
+  <main>
     {{ content | safe }}
   </main>
 
   <footer class="site-footer">
     <div class="container">
-      <div class="friend-links">
-        <h3>友情鏈接：</h3>
-        <ul>
-          <li><a href="https://deepseek-chat.com" target="_blank" rel="noopener" title="DeepSeek 線上聊天智能對話">DeepSeek 線上智能對話</a></li>
-          <li><a href="https://hk-deepseek.com" target="_blank" rel="noopener" title="DeepSeek 香港繁體技術社區">DeepSeek 香港技術社區</a></li>
-          <li><a href="https://deepseek-in.com" target="_blank" rel="noopener" title="DeepSeek 全球產業應用整合">DeepSeek 產業應用網</a></li>
-          <li><a href="https://deepseek-1.com" target="_blank" rel="noopener" title="DeepSeek 第一中文繁體教學門戶">DeepSeek 中文教學門戶</a></li>
-          <li><a href="https://deepseek-my.com" target="_blank" rel="noopener" title="DeepSeek 個人自動化高效方案">DeepSeek 高效方案中心</a></li>
-        </ul>
+      <div class="friend-section">
+        <h4>全球 AI 技術生態合作夥伴：</h4>
+        <div class="friend-grid">
+          <a href="https://deepseek-chat.com" target="_blank" rel="noopener">DeepSeek 線上智能對話</a>
+          <a href="https://hk-deepseek.com" target="_blank" rel="noopener">DeepSeek 香港技術社區</a>
+          <a href="https://deepseek-in.com" target="_blank" rel="noopener">DeepSeek 產業智能集成</a>
+          <a href="https://deepseek-1.com" target="_blank" rel="noopener">DeepSeek 第一中文教學門戶</a>
+          <a href="https://deepseek-my.com" target="_blank" rel="noopener">DeepSeek 亞太企業智庫中心</a>
+        </div>
       </div>
-      <div class="copyright">
-        <p>&copy; 2026 DeepSeek 香港非官方中文情報站。版權所有。本站內容專為香港及全球繁體用戶優化。</p>
+      <div class="copy">
+        <p>&copy; 2026 DeepSeek 全球產業應用整合中心. 本站受 51.la 精準數據驅動，為企業數字轉型導航.</p>
       </div>
     </div>
   </footer>
