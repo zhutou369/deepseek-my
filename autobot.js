@@ -42,7 +42,7 @@ async function runAutoBot() {
     
     Syarat Utama SEO:
     1. Panjang artikel mestilah antara 1000 hingga 1500 patah perkataan.
-    2. Tajuk (Title) mestilah padat, menarik, dan TIDAK MELEBIHI 12 patah perkataan (Sangat Penting untuk SEO!).
+    2. Tajuk (Title) mestilah sangat padat, ringkas dan TIDAK MELEBIHI 8 patah perkataan.
     3. Nada profesional, gunakan istilah tempatan Malaysia (cth: PKS, transformasi digital, rangkaian, kad grafik).
     4. Output Front Matter secara ketat (Gunakan Description yang mantap antara 15 hingga 25 patah perkataan):
 
@@ -58,15 +58,12 @@ async function runAutoBot() {
     Imej 1: ${selectedImages[0]}
     Imej 2: ${selectedImages[1]}
 
-    🚫 AMARAN KERAS排版死命令: 
+    🚫 AMARAN KERAS: 
     * Jangan sesekali hasilkan tag H1 (#) di dalam badan artikel.
     * Baris pertama artikel tidak perlu ulang tajuk utama.
     * Struktur tajuk bahagian dalam badan artikel mestilah bermula dengan H2 (##) diikuti H3 (###).
         `;
 
-        // ==========================================
-        // 🌟 核心修复：智能防拥堵自动重试逻辑 (应对 503/429 错误)
-        // ==========================================
         let response;
         let retryCount = 0;
         const maxRetries = 3;
@@ -75,43 +72,50 @@ async function runAutoBot() {
         while (retryCount < maxRetries) {
             try {
                 console.log(`Menghubungi Gemini API... (Percubaan ke-${retryCount + 1})`);
-                
                 response = await ai.models.generateContent({
                     model: 'gemini-2.5-flash',
                     contents: prompt,
                 });
 
                 if (response && response.text) {
-                    break; // 成功拿到数据，跳出重试循环
+                    break; 
                 } else {
                     throw new Error("Gemini returned empty response");
                 }
             } catch (error) {
                 retryCount++;
                 const errMsg = error.message.toLowerCase();
-                
-                // 如果是服务忙碌(503)或触发限流(429)，且没超过最大重试次数，则等待后重试
                 if (errMsg.includes('503') || errMsg.includes('unavailable') || errMsg.includes('429')) {
                     if (retryCount < maxRetries) {
                         console.warn(`⚠️ Server Gemini sibuk (503/429). Menunggu 5 saat sebelum cuba semula...`);
                         await delay(5000); 
                     }
                 } else {
-                    // 如果是其他致命错误（如API Key失效、语法错误等），不重试直接抛出
                     throw error;
                 }
             }
         }
 
         if (!response || !response.text) {
-            console.error(`❌ Gagal menjana artikel selepas ${maxRetries} kali cubaan disebabkan kesesakan server. Kata kunci dikembalikan ke dalam senarai.`);
-            keywords.unshift(currentTopic); // 任务失败，把关键词塞回队列头部
+            console.error(`❌ Gagal menjana artikel selepas ${maxRetries} kali cubaan. Kata kunci dikembalikan.`);
+            keywords.unshift(currentTopic); 
             continue; 
         }
-        // ==========================================
 
         try {
             let articleContent = response.text;
+
+            // 🌟 核心修正：读取生成的 Front Matter 标题，并强行阻断超长标题
+            const titleMatch = articleContent.match(/title:\s*["']?([^"'\n]+)["']?/);
+            if (titleMatch && titleMatch[1]) {
+                let generatedTitle = titleMatch[1].trim();
+                if (generatedTitle.length > 45) {
+                    let truncatedTitle = generatedTitle.substring(0, 42) + "...";
+                    articleContent = articleContent.replace(titleMatch[0], `title: "${truncatedTitle}"`);
+                    console.log(`✂️ Title terlalu panjang (${generatedTitle.length} char), dipotong kepada: "${truncatedTitle}"`);
+                }
+            }
+
             const fileName = `${todayStr}-post-${randomId}-${currentLoop}.md`;
             const outputDir = path.join(__dirname, 'src', 'posts'); 
             if (!fs.existsSync(outputDir)) fs.mkdirSync(outputDir, { recursive: true });
