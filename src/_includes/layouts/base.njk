@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ title }} | DeepSeek Malaysia Hub</title>
+    {# 🌟 核心修正：优化拼接逻辑，避免首页标题叠加超长 #}
+    <title>{% if title == "DeepSeek Malaysia" %}{{ title }}{% elif title %}{{ title }} | DeepSeek MY{% else %}DeepSeek Malaysia Hub{% endif %}</title>
     <meta name="description" content="{{ description }}">
     <style>
         :root { --primary: #003366; --accent: #ffcc00; --bg: #f4f7f6; --text: #2c3e50; }
@@ -14,18 +15,18 @@
         .logo a { text-decoration: none; color: var(--primary); font-weight: 900; font-size: 24px; }
         nav a { margin-left: 20px; text-decoration: none; color: var(--text); font-weight: 600; }
         nav a:hover { color: var(--primary); }
-        footer { background: var(--primary); color: #fff; padding: 60px 0 20px; margin-top: 80px; }
-        .friend-links { display: flex; flex-wrap: wrap; gap: 20px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px; margin-top: 30px; }
-        .friend-links a { color: #ccc; text-decoration: none; font-size: 14px; }
-        .friend-links a:hover { color: var(--accent); }
+        footer { background: #2c3e50; color: #fff; padding: 60px 0; margin-top: 80px; }
+        footer h3 { color: var(--accent); }
+        footer a { color: #fff; text-decoration: none; margin: 0 10px; }
+        footer a:hover { text-decoration: underline; }
+        .friend-links { margin-top: 20px; border-top: 1px solid #455a64; padding-top: 20px; font-size: 14px; }
     </style>
-    <script charset="UTF-8" id="LA_COLLECT" src="//sdk.51.la/js-sdk-pro.min.js"></script>
-    <script>LA.init({id:"3K7l95Zodr0uFrIN",ck:"3K7l95Zodr0uFrIN"})</script>
 </head>
 <body>
+
     <header>
         <div class="container header-flex">
-            {# 🌟 解决 H1 冲突：首页用 H1，内页用 div #}
+            {# 🌟 核心修正：防止 H1 标签在页面其它地方冲突，首页才在 Logo 用 H1 #}
             {% if page.url == "/" %}
                 <h1 class="logo" style="margin:0;"><a href="/">DEEPSEEK MALAYSIA</a></h1>
             {% else %}
@@ -54,8 +55,9 @@
                 <a href="https://deepseek-1.com" target="_blank">DeepSeek Utama Satu</a>
                 <a href="https://deepseek-my.com" target="_blank">DeepSeek Malaysia</a>
             </div>
-            <p style="text-align: center; font-size: 12px; margin-top: 40px; color: #888;">&copy; 2026 DeepSeek-MY. Dikendalikan oleh 51.la Analytics.</p>
+            <p style="text-align: center; font-size: 14px; color: #bdc3c7; margin-top: 40px;">&copy; 2026 DeepSeek Malaysia Hub. Hak Cipta Terpelihara.</p>
         </div>
     </footer>
+
 </body>
 </html>
