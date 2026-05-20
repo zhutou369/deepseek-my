@@ -3,8 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    {# 🌟 核心修正：优化拼接逻辑，避免首页标题叠加超长 #}
-    <title>{% if title == "DeepSeek Malaysia" %}{{ title }}{% elif title %}{{ title }} | DeepSeek MY{% else %}DeepSeek Malaysia Hub{% endif %}</title>
+    {# 🌟 核心修正：智能计算标题长度，如果标题本身就很长，绝对不强行拼接后缀，防止 SEO 报错标题太长 #}
+    <title>
+        {%- if title == "DeepSeek Malaysia" -%}
+            {{ title }}
+        {%- else -%}
+            {# 如果文章标题本身超过 45 个字符，直接单独输出标题，不再拼接任何后缀 #}
+            {%- if title.length > 45 -%}
+                {{ title }}
+            {%- else -%}
+                {{ title }} | DeepSeek MY
+            {%- endif -%}
+        {%- endif -%}
+    </title>
     <meta name="description" content="{{ description }}">
     <style>
         :root { --primary: #003366; --accent: #ffcc00; --bg: #f4f7f6; --text: #2c3e50; }
@@ -26,7 +37,6 @@
 
     <header>
         <div class="container header-flex">
-            {# 🌟 核心修正：防止 H1 标签在页面其它地方冲突，首页才在 Logo 用 H1 #}
             {% if page.url == "/" %}
                 <h1 class="logo" style="margin:0;"><a href="/">DEEPSEEK MALAYSIA</a></h1>
             {% else %}
