@@ -64,9 +64,12 @@ async function runAutoBot() {
     * Struktur tajuk bahagian dalam badan artikel mestilah bermula dengan H2 (##) diikuti H3 (###).
         `;
 
+        // ==========================================
+        // 🌟 终极加固：6次抗压重试 + 阶梯递增等待机制
+        // ==========================================
         let response;
         let retryCount = 0;
-        const maxRetries = 3;
+        const maxRetries = 6; // 提高到 6 次重试
         const delay = (ms) => new Promise(res => setTimeout(res, ms));
 
         while (retryCount < maxRetries) {
@@ -87,8 +90,10 @@ async function runAutoBot() {
                 const errMsg = error.message.toLowerCase();
                 if (errMsg.includes('503') || errMsg.includes('unavailable') || errMsg.includes('429')) {
                     if (retryCount < maxRetries) {
-                        console.warn(`⚠️ Server Gemini sibuk (503/429). Menunggu 5 saat sebelum cuba semula...`);
-                        await delay(5000); 
+                        // 阶梯式等待：第1次等5秒，第2次等10秒，第3次等15秒... 完美避开拥堵波峰
+                        const waitTime = retryCount * 5000;
+                        console.warn(`⚠️ Server Gemini sibuk (503/429). Menunggu ${waitTime / 1000} saat sebelum cuba semula...`);
+                        await delay(waitTime); 
                     }
                 } else {
                     throw error;
@@ -105,7 +110,6 @@ async function runAutoBot() {
         try {
             let articleContent = response.text;
 
-            // 🌟 核心修正：读取生成的 Front Matter 标题，并强行阻断超长标题
             const titleMatch = articleContent.match(/title:\s*["']?([^"'\n]+)["']?/);
             if (titleMatch && titleMatch[1]) {
                 let generatedTitle = titleMatch[1].trim();
