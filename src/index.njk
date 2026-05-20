@@ -1,0 +1,83 @@
+---
+layout: layouts/base.njk
+title: DeepSeek 繁體中文教學與企業 AI 數字轉型解決方案
+description: 專注於 DeepSeek (深度求索) 模型在香港及亞太地區的私有化部署、API 整合、提示詞工程優化及大模型商用落地實踐。
+---
+
+<style>
+  .hero-section { padding: 60px 0 40px 0; border-bottom: 1px solid #eee; margin-bottom: 40px; }
+  .hero-section p { font-size: 18px; color: #666; max-width: 800px; }
+  
+  /* 多方塊矩陣優化 */
+  .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 25px; margin-bottom: 50px; }
+  .feature-card { border: 1px solid #e1e4e8; border-radius: 8px; padding: 25px; background: #fff; transition: transform 0.2s; }
+  .feature-card:hover { transform: translateY(-3px); box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+  .feature-card h2 { font-size: 20px; color: #111; margin-top: 0; margin-bottom: 12px; display: flex; align-items: center; gap: 10px; }
+  .feature-card p { font-size: 14px; color: #666; margin: 0; }
+  
+  .section-title { font-size: 22px; margin-bottom: 25px; border-bottom: 2px solid #333; padding-bottom: 8px; }
+  .home-post-list { list-style: none; padding: 0; margin: 0; }
+  .home-post-item { padding: 20px 0; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
+  .home-post-item a { font-size: 18px; font-weight: 600; color: #111; text-decoration: none; }
+  .home-post-item a:hover { color: var(--primary-color); }
+  .home-post-meta { font-size: 14px; color: #999; }
+</style>
+
+<div class="hero-section">
+  <p>歡迎來到 **DeepSeek 香港中文情報站**。本站致力於為在地開發者、IT 經理及企業決策層提供全方位的 DeepSeek 開源模型技術解析。涵蓋最新一代 DeepSeek-V3、DeepSeek-R1 推理模型架構探討、香港本地低成本私有部署方案、高效提示詞工程，協助企業在數字轉型浪潮中搶佔先機。</p>
+</div>
+
+<div class="features-grid">
+  <div class="feature-card">
+    <h2><span>💡</span> 核心技術專題</h2>
+    <p>深度解構 DeepSeek 開源模型的混合專家架構 (MoE)，探討多Token預測 (MTP) 及動態權重激活機制，帶您透視高性價比大模型背後的底層代碼邏輯。</p>
+  </div>
+  <div class="feature-card">
+    <h2><span>⚡</span> 本地私有部署</h2>
+    <p>針對香港企業敏感數據不出關的合規需求，提供基於 Ollama、vLLM 以及國產硬體適配的私有化微調與集群部署指南，保障商用級別數據安全。</p>
+  </div>
+  <div class="feature-card">
+    <h2><span>⚙️</span> API 開發整合</h2>
+    <p>詳解如何將 DeepSeek 官方 API 完美對接到現有的企業 ERP、CRM 以及 WhatsApp 跨境客服系統中，實現高吞吐、低延遲的智能化工作流自動化。</p>
+  </div>
+  <div class="feature-card">
+    <h2><span>🎯</span> 高級提示詞工程</h2>
+    <p>匯集適合 R1 推理模型架構的長文本思維鏈 (Chain-of-Thought) 觸發技巧、Few-Shot 範例結構，教您如何壓榨出大模型的極致推理與數學邏輯上限。</p>
+  </div>
+</div>
+
+<div class="layout-grid">
+  <div class="main-content-area">
+    <h3 class="section-title">🔥 最新發佈與更新指南</h3>
+    <ul class="home-post-list">
+      {# 🌟 精準控制只取最新 5 篇文章，reverse=true 保證最新更新排前 #}
+      {% for post in collections.posts | reverse %}
+        {% if loop.index0 < 5 %}
+          <li class="home-post-item">
+            <a href="{{ post.url }}">{{ post.data.title }}</a>
+            <span class="home-post-meta">{{ post.date | date("YYYY-MM-DD") if post.date else "2026-05-20" }}</span>
+          </li>
+        {% endif %}
+      {% else %}
+        <li class="home-post-item">暫無技術文章更新，敬請期待。</li>
+      {% endfor %}
+    </ul>
+    
+    <div style="margin-top: 30px;">
+      <a href="/posts/" style="color: var(--primary-color); font-weight: bold; text-decoration: none;">查看全部 DeepSeek 檔案庫 &raquo;</a>
+    </div>
+  </div>
+
+  <div class="sidebar-area">
+    <div class="sidebar-panel">
+      <h3>📈 熱門檢索焦點</h3>
+      <ul class="sidebar-list">
+        {% for post in collections.posts | reverse %}
+          {% if loop.index0 < 5 %}
+            <li><a href="{{ post.url }}">{{ post.data.title }}</a></li>
+          {% endif %}
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+</div>
