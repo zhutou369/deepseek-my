@@ -1,0 +1,22 @@
+---
+layout: layouts/base.njk
+title: "Tags DeepSeek Malaysia"
+description: "Lihat artikel DeepSeek Malaysia mengikut topik seperti API, Ollama, RAG, privasi data dan automasi bisnes."
+permalink: "/tags/index.html"
+---
+
+<div class="container" style="padding: 50px 20px;">
+    <header style="margin-bottom: 30px;">
+        <h2 style="color: var(--primary); font-size: 32px;">Tags DeepSeek Malaysia</h2>
+        <p style="color: #667085;">Topik kandungan yang dijana daripada Front Matter artikel. Tag sistem seperti <code>posts</code> tidak dipaparkan di sini.</p>
+    </header>
+
+    <div class="tag-cloud">
+        {% for tag in collections.tagList %}
+            {% set tagPosts = collections.posts | postsByTag(tag) %}
+            <a href="/tags/{{ tag | tagSlug }}/">{{ tag }} <span>{{ tagPosts.length }}</span></a>
+        {% else %}
+            <p>Belum ada tag kandungan. Selepas artikel automatik dijana, senarai ini akan dikemas kini.</p>
+        {% endfor %}
+    </div>
+</div>

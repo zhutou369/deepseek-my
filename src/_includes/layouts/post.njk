@@ -14,6 +14,16 @@ layout: layouts/base.njk
         {# 🌟 唯一 H1 文章标题 #}
         <h1>{{ title }}</h1>
         <p style="color: #999;">Tarikh: {{ date | dateFilter }}</p>
+        {% if tags and tags.length > 1 %}
+            <div class="post-tag-list">
+                <span>Tags:</span>
+                {% for tag in tags %}
+                    {% if tag != "posts" %}
+                        <a href="/tags/{{ tag | tagSlug }}/">{{ tag }}</a>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        {% endif %}
         <div class="body-text">{{ content | safe }}</div>
 
         <nav class="nav-links">
