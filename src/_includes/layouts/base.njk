@@ -1,80 +1,93 @@
 <!DOCTYPE html>
 <html lang="ms-MY">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    {# 🌟 核心修正：智能计算标题长度，如果标题本身就很长，绝对不强行拼接后缀，防止 SEO 报错标题太长 #}
-    <title>
-        {%- if title == "DeepSeek Malaysia" -%}
-            {{ title }}
-        {%- else -%}
-            {# 如果文章标题本身超过 45 个字符，直接单独输出标题，不再拼接任何后缀 #}
-            {%- if title.length > 45 -%}
-                {{ title }}
-            {%- else -%}
-                {{ title }} | DeepSeek MY
-            {%- endif -%}
-        {%- endif -%}
-    </title>
-    <meta name="description" content="{{ description }}">
-    <style>
-        :root { --primary: #003366; --accent: #ffcc00; --bg: #f4f7f6; --text: #2c3e50; }
-        body { font-family: 'Inter', sans-serif; line-height: 1.8; color: var(--text); background: #fff; margin: 0; }
-        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
-        header { border-bottom: 3px solid var(--primary); padding: 20px 0; background: #fff; position: sticky; top: 0; z-index: 100; }
-        .header-flex { display: flex; justify-content: space-between; align-items: center; }
-        .logo a { text-decoration: none; color: var(--primary); font-weight: 900; font-size: 24px; }
-        nav a { margin-left: 20px; text-decoration: none; color: var(--text); font-weight: 600; }
-        nav a:hover { color: var(--primary); }
-        .post-tag-list, .tag-cloud { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
-        .post-tag-list { margin: 10px 0 20px; }
-        .post-tag-list a, .tag-cloud a { display: inline-flex; gap: 6px; align-items: center; border: 1px solid #e5e7eb; border-radius: 999px; padding: 5px 12px; background: #fffbe6; color: var(--primary); text-decoration: none; font-size: 13px; font-weight: 700; }
-        .post-tag-list a:hover, .tag-cloud a:hover { border-color: var(--accent); background: #fff4bf; }
-        .tag-cloud { background: var(--bg); padding: 25px; border-radius: 10px; margin-bottom: 60px; }
-        .tag-cloud span { color: #7f8c8d; font-size: 12px; }
-        footer { background: #2c3e50; color: #fff; padding: 60px 0; margin-top: 80px; }
-        footer h3 { color: var(--accent); }
-        footer a { color: #fff; text-decoration: none; margin: 0 10px; }
-        footer a:hover { text-decoration: underline; }
-        .friend-links { margin-top: 20px; border-top: 1px solid #455a64; padding-top: 20px; font-size: 14px; }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="baidu-site-verification" content="codeva-NNtqMpLLuE">
+  {% set docTitle = title or site.title %}
+  {% set metaDescription = description or site.description %}
+  {% set canonicalPath = canonicalUrl or page.url or "/" %}
+  {% set canonical = site.url + canonicalPath %}
+  <title>{% if page.url != "/" %}{{ docTitle }} | {{ site.brand }}{% else %}{{ site.title }}{% endif %}</title>
+  <meta name="description" content="{{ metaDescription }}">
+  <meta name="keywords" content="{{ pageKeywords or site.keywords }}">
+  {% if noindex %}
+  <meta name="robots" content="noindex,follow">
+  {% else %}
+  <meta name="robots" content="index,follow,max-image-preview:large">
+  {% endif %}
+  <link rel="canonical" href="{{ canonical }}">
+  <meta property="og:type" content="{% if layout == 'layouts/post.njk' %}article{% else %}website{% endif %}">
+  <meta property="og:title" content="{{ docTitle }}">
+  <meta property="og:description" content="{{ metaDescription }}">
+  <meta property="og:url" content="{{ canonical }}">
+  <meta property="og:site_name" content="{{ site.brand }}">
+  <meta property="og:locale" content="{{ site.locale }}">
+  <meta name="twitter:card" content="summary">
+  <script type="application/ld+json">
+{{ {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": site.brand,
+  "url": site.url,
+  "description": site.description
+} | dump | safe }}
+  </script>
+  <style>
+    :root { --primary: #003366; --accent: #ffcc00; --bg: #f4f7f6; --text: #2c3e50; --border: #e2e8f0; }
+    body { font-family: 'Inter', -apple-system, sans-serif; line-height: 1.7; color: var(--text); background: #fff; margin: 0; }
+    .container { max-width: 1140px; margin: 0 auto; padding: 0 20px; }
+    header { border-bottom: 3px solid var(--primary); padding: 20px 0; background: #fff; position: sticky; top: 0; z-index: 100; }
+    .header-flex { display: flex; justify-content: space-between; align-items: center; }
+    .logo a { text-decoration: none; color: var(--primary); font-weight: 900; font-size: 22px; }
+    nav a { margin-left: 20px; text-decoration: none; color: var(--text); font-weight: 600; }
+    nav a:hover, nav a.active { color: var(--primary); }
+    .post-tag-list, .tag-cloud { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+    .post-tag-list { margin: 10px 0 20px; }
+    .post-tag-list a, .tag-cloud a { display: inline-flex; gap: 6px; align-items: center; border: 1px solid var(--border); border-radius: 999px; padding: 5px 12px; background: #fffbe6; color: var(--primary); text-decoration: none; font-size: 13px; font-weight: 700; }
+    .post-tag-list a:hover, .tag-cloud a:hover { border-color: var(--accent); background: #fff4bf; }
+    .tag-cloud { background: var(--bg); padding: 25px; border-radius: 10px; margin-bottom: 60px; }
+    .tag-cloud span { color: #7f8c8d; font-size: 12px; }
+    footer { background: #2c3e50; color: #fff; padding: 60px 0 30px; margin-top: 80px; }
+    footer h3 { color: var(--accent); }
+    footer a { color: #fff; text-decoration: none; margin: 0 10px; }
+    footer a:hover { text-decoration: underline; }
+    .friend-links { margin-top: 20px; border-top: 1px solid #455a64; padding-top: 20px; font-size: 14px; }
+    .copy { text-align: center; font-size: 13px; color: #bdc3c7; margin-top: 30px; }
+  </style>
+  <script charset="UTF-8" id="LA_COLLECT" src="//sdk.51.la/js-sdk-pro.min.js" defer></script>
+  <script>window.addEventListener("load",function(){if(window.LA){LA.init({id:"{{ site.laId }}",ck:"{{ site.laId }}"})}})</script>
 </head>
 <body>
-
-    <header>
-        <div class="container header-flex">
-            {% if page.url == "/" %}
-                <h1 class="logo" style="margin:0;"><a href="/">DEEPSEEK MALAYSIA</a></h1>
-            {% else %}
-                <div class="logo" style="font-weight:900; font-size:24px;"><a href="/">DEEPSEEK MALAYSIA</a></div>
-            {% endif %}
-            <nav>
-                <a href="/">Utama</a>
-                <a href="/posts/">Arkib</a>
-                <a href="/tags/">Tags</a>
-            </nav>
-        </div>
-    </header>
-
-    <main>{{ content | safe }}</main>
-
-    <footer>
-        <div class="container">
-            <div style="text-align: center; margin-bottom: 40px;">
-                <h3>Hab Teknologi DeepSeek Asia Tenggara</h3>
-                <p>Menerajui revolusi AI untuk PKS di Malaysia.</p>
-            </div>
-            <div class="friend-links">
-                <strong>Rangkaian Strategik:</strong>
-                <a href="https://deepseek-chat.com" target="_blank">DeepSeek Sembang AI</a>
-                <a href="https://hk-deepseek.com" target="_blank">DeepSeek Hong Kong Hub</a>
-                <a href="https://deepseek-in.com" target="_blank">DeepSeek Global India</a>
-                <a href="https://deepseek-1.com" target="_blank">DeepSeek Utama Satu</a>
-                <a href="https://deepseek-my.com" target="_blank">DeepSeek Malaysia</a>
-            </div>
-            <p style="text-align: center; font-size: 14px; color: #bdc3c7; margin-top: 40px;">&copy; 2026 DeepSeek Malaysia Hub. Hak Cipta Terpelihara.</p>
-        </div>
-    </footer>
-
+  <header>
+    <div class="container header-flex">
+      {% if page.url == "/" %}
+        <h1 class="logo" style="margin:0;"><a href="/">{{ site.brand }}</a></h1>
+      {% else %}
+        <div class="logo"><a href="/">{{ site.brand }}</a></div>
+      {% endif %}
+      <nav>
+        <a href="/" {% if page.url == "/" %}class="active"{% endif %}>Utama</a>
+        <a href="/posts/" {% if page.url.startsWith('/posts/') %}class="active"{% endif %}>Artikel</a>
+      </nav>
+    </div>
+  </header>
+  <main>{{ content | safe }}</main>
+  <footer>
+    <div class="container">
+      <div style="text-align: center; margin-bottom: 30px;">
+        <h3>Rujukan DeepSeek untuk Malaysia</h3>
+        <p>Nota teknikal dan tutorial praktikal — bukan laman web rasmi DeepSeek.</p>
+      </div>
+      <div class="friend-links">
+        <strong>Laman berkaitan:</strong>
+        <a href="https://deepseek-chat.com" target="_blank" rel="noopener">DeepSeek Sembang AI</a>
+        <a href="https://hk-deepseek.com" target="_blank" rel="noopener">DeepSeek Hong Kong</a>
+        <a href="https://deepseek-in.com" target="_blank" rel="noopener">DeepSeek India Hub</a>
+        <a href="https://deepseek-1.com" target="_blank" rel="noopener">DeepSeek Artikel Teknikal</a>
+      </div>
+      <p class="copy">&copy; 2026 {{ site.brand }}</p>
+    </div>
+  </footer>
 </body>
 </html>

@@ -1,47 +1,82 @@
 ---
 layout: layouts/base.njk
 ---
-<style>
-    .post-container { display: grid; grid-template-columns: 1fr 300px; gap: 40px; margin: 40px 0; }
-    @media (max-width: 800px) { .post-container { grid-template-columns: 1fr; } }
-    .post-content h1 { font-size: 32px; color: var(--primary); border-bottom: 2px solid var(--bg); padding-bottom: 15px; }
-    .sidebar-posts { background: var(--bg); padding: 20px; border-radius: 8px; height: fit-content; }
-    .nav-links { display: flex; justify-content: space-between; margin-top: 50px; padding-top: 20px; border-top: 1px solid #eee; }
-</style>
 
-<div class="container post-container">
-    <article class="post-content">
-        {# 🌟 唯一 H1 文章标题 #}
-        <h1>{{ title }}</h1>
-        <p style="color: #999;">Tarikh: {{ date | dateFilter }}</p>
-        {% if tags and tags.length > 1 %}
-            <div class="post-tag-list">
-                <span>Tags:</span>
-                {% for tag in tags %}
-                    {% if tag != "posts" %}
-                        <a href="/tags/{{ tag | tagSlug }}/">{{ tag }}</a>
-                    {% endif %}
-                {% endfor %}
-            </div>
+<div class="container" style="padding: 60px 0;">
+  <article>
+    <header style="margin-bottom: 50px; text-align: center;">
+      <h1 style="font-size: 36px; line-height: 1.2; color: var(--primary); margin: 0 0 20px;">{{ title }}</h1>
+      <div style="color:#94a3b8; font-size:14px;">
+        Diterbitkan: {{ date | dateFilter }}{% if updated %} · Dikemas kini {{ updated | dateFilter }}{% endif %}
+        · {{ site.brand }}
+      </div>
+      {% if tags and tags.length > 1 %}
+        <div class="post-tag-list" style="justify-content:center; margin-top:12px;">
+          {% for tag in tags %}
+            {% if tag != "posts" %}
+              <a href="/tags/{{ tag | tagSlug }}/">{{ tag }}</a>
+            {% endif %}
+          {% endfor %}
+        </div>
+      {% endif %}
+    </header>
+
+    <section class="post-body" style="font-size: 17px; color: #334155; line-height: 1.8; max-width: 800px; margin: 0 auto;">
+      {{ content | safe }}
+    </section>
+
+    <div style="max-width: 800px; margin: 80px auto 40px; display: flex; justify-content: space-between; border-top: 1px solid var(--border); padding-top: 30px;">
+      {% set prevPost = collections.indexablePosts | getPreviousCollectionItem(page) %}
+      {% set nextPost = collections.indexablePosts | getNextCollectionItem(page) %}
+      <div style="width:45%;">
+        {% if prevPost %}
+          <div style="font-size:12px; color:#94a3b8; margin-bottom:5px;">Artikel sebelumnya</div>
+          <a href="{{ prevPost.url }}" style="text-decoration:none; color:var(--primary); font-weight:600;">{{ prevPost.data.title }}</a>
         {% endif %}
-        <div class="body-text">{{ content | safe }}</div>
+      </div>
+      <div style="width:45%; text-align:right;">
+        {% if nextPost %}
+          <div style="font-size:12px; color:#94a3b8; margin-bottom:5px;">Artikel seterusnya</div>
+          <a href="{{ nextPost.url }}" style="text-decoration:none; color:var(--primary); font-weight:600;">{{ nextPost.data.title }}</a>
+        {% endif %}
+      </div>
+    </div>
 
-        <nav class="nav-links">
-            {% set prev = collections.posts | getPreviousCollectionItem(page) %}
-            {% set next = collections.posts | getNextCollectionItem(page) %}
-            <div>{% if prev %} <a href="{{ prev.url }}">⬅️ {{ prev.data.title }}</a> {% endif %}</div>
-            <div>{% if next %} <a href="{{ next.url }}">{{ next.data.title }} ➡️</a> {% endif %}</div>
-        </nav>
-    </article>
-
-    <aside class="sidebar-posts">
-        <h3>Berita Terkini</h3>
-        <ul style="list-style: none; padding: 0;">
-            {% for item in collections.posts | limit(5) %}
-                <li style="margin-bottom: 15px; border-bottom: 1px dashed #ddd; padding-bottom: 5px;">
-                    <a href="{{ item.url }}" style="text-decoration: none; color: var(--text); font-size: 14px;">{{ item.data.title }}</a>
-                </li>
-            {% endfor %}
-        </ul>
-    </aside>
+    <div style="max-width: 800px; margin: 40px auto; background: var(--bg); padding: 40px; border-radius: 16px;">
+      <h3 style="margin-top:0; font-size:18px;">Tutorial terkini</h3>
+      <ul style="list-style:none; padding:0; margin:20px 0 0; display: grid; gap: 15px;">
+        {% for item in collections.indexablePosts | limit(5) %}
+          <li><a href="{{ item.url }}" style="text-decoration:none; color:var(--text); font-size:15px; border-bottom:1px solid var(--border); display:block; padding-bottom:10px;">{{ item.data.title }}</a></li>
+        {% endfor %}
+      </ul>
+      <div style="margin-top:20px; text-align:right;">
+        <a href="/posts/" style="color:var(--primary); text-decoration:none; font-size:14px; font-weight:700;">Lihat semua artikel &raquo;</a>
+      </div>
+    </div>
+  </article>
 </div>
+
+<script type="application/ld+json">
+{{ {
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": title,
+  "description": description,
+  "datePublished": date | htmlDate,
+  "dateModified": (updated | htmlDate) if updated else (date | htmlDate),
+  "author": { "@type": "Organization", "name": site.brand },
+  "publisher": { "@type": "Organization", "name": site.brand, "url": site.url },
+  "mainEntityOfPage": site.url + page.url
+} | dump | safe }}
+</script>
+<script type="application/ld+json">
+{{ {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Utama", "item": site.url + "/" },
+    { "@type": "ListItem", "position": 2, "name": "Artikel", "item": site.url + "/posts/" },
+    { "@type": "ListItem", "position": 3, "name": title, "item": site.url + page.url }
+  ]
+} | dump | safe }}
+</script>

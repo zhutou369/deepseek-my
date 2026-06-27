@@ -1,0 +1,41 @@
+---
+layout: layouts/base.njk
+title: Artikel & Tutorial DeepSeek Malaysia
+description: Layari tutorial log masuk DeepSeek, API, prompt, penyelesaian ralat, dan pemasangan Ollama dalam Bahasa Melayu.
+eleventyComputed:
+  noindex: "{{ pagination.pageNumber > 0 }}"
+pagination:
+  data: collections.posts
+  size: 10
+  alias: posts
+  reverse: true
+permalink: "posts/{% if pagination.pageNumber > 0 %}page-{{ pagination.pageNumber + 1 }}/{% endif %}index.html"
+---
+
+<div class="container" style="padding-top: 60px;">
+  <h1 style="font-size: 32px; color: var(--primary); margin-bottom: 20px; border-left: 6px solid var(--accent); padding-left: 20px;">
+    Senarai Artikel DeepSeek Malaysia
+  </h1>
+  <p style="color:#64748b; margin-bottom:40px;">Tutorial utama disenaraikan untuk carian; sebahagian artikel auto-jana lama dikecualikan daripada indeks Google tetapi masih boleh dibaca di sini.</p>
+
+  <div style="display: grid; gap: 30px;">
+    {% for post in posts %}
+      <article style="border-bottom: 1px solid var(--border); padding-bottom: 30px;">
+        <div style="font-size: 14px; color: var(--primary); margin-bottom: 10px;">{{ post.date | dateFilter }}</div>
+        <h2 style="margin:0 0 15px 0; font-size: 24px;"><a href="{{ post.url }}" style="text-decoration:none; color: var(--primary);">{{ post.data.title }}</a></h2>
+        <p style="color:#64748b; font-size:15px; margin-bottom:15px;">{{ post.data.description }}</p>
+        <a href="{{ post.url }}" style="color:var(--primary); text-decoration:none; font-weight:600; font-size:14px;">Baca artikel &raquo;</a>
+      </article>
+    {% endfor %}
+  </div>
+
+  {% if pagination.pages.length > 1 %}
+  <nav style="display: flex; justify-content: center; gap: 10px; margin: 60px 0;">
+    {% for pageEntry in pagination.pages %}
+      <a href="{{ pagination.hrefs[loop.index0] }}" style="padding: 10px 18px; border: 1px solid var(--border); text-decoration: none; border-radius: 6px; {{ 'background: var(--primary); color:#fff; border-color: var(--primary);' if page.url == pagination.hrefs[loop.index0] else 'color:var(--text);' }}">
+        {{ loop.index }}
+      </a>
+    {% endfor %}
+  </nav>
+  {% endif %}
+</div>

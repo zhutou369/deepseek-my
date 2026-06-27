@@ -123,6 +123,7 @@ title: "${yamlEscape(article.title)}"
 description: "${yamlEscape(article.description)}"
 date: ${todayStr}
 tags: ${tags}
+generated: true
 layout: "layouts/post.njk"
 permalink: "${permalink}"
 ---
