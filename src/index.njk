@@ -6,67 +6,41 @@ pageKeywords: DeepSeek Malaysia,DeepSeek API,DeepSeek login,DeepSeek prompt,Olla
 ---
 
 <style>
-  .hero { background: linear-gradient(135deg, #003366 0%, #1a5276 100%); color: #fff; padding: 80px 0; text-align: center; }
-  .hero p { font-size: 18px; color: #cbd5e1; max-width: 760px; margin: 20px auto; line-height: 1.7; }
-  .hero h2 { font-size: 38px; margin: 0; }
-  .matrix-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin: -40px 0 60px; }
+  .hero { background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); color: #fff; padding: 80px 0; text-align: center; }
+  .hero p { font-size: 18px; color: #94a3b8; max-width: 760px; margin: 20px auto; line-height: 1.7; }
+  .hero h1 { font-size: 42px; margin: 0; }
+  .matrix-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin: -40px 0 60px; }
+  @media (max-width: 992px) { .matrix-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 576px) { .matrix-grid { grid-template-columns: 1fr; } }
   .matrix-item { background: #fff; border: 1px solid var(--border); padding: 28px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
-  .matrix-item h3 { color: var(--primary); margin: 0 0 10px; font-size: 18px; }
+  .matrix-item h3 { color: var(--bg-dark); margin: 0 0 10px; font-size: 18px; }
   .matrix-item p { font-size: 14px; color: #64748b; margin: 0 0 12px; line-height: 1.6; }
   .matrix-item a { color: var(--primary); font-weight: 600; text-decoration: none; font-size: 14px; }
   .long-desc { padding: 60px 0; border-bottom: 1px solid var(--border); }
   .desc-flex { display: grid; grid-template-columns: 1fr 1fr; gap: 50px; align-items: center; }
   @media (max-width: 768px) { .desc-flex { grid-template-columns: 1fr; } }
-  .desc-content h2 { font-size: 28px; color: var(--primary); margin-bottom: 20px; }
+  .desc-content h2 { font-size: 28px; color: var(--bg-dark); margin-bottom: 20px; }
   .desc-content p { font-size: 16px; margin-bottom: 16px; color: #475569; line-height: 1.7; }
-  .recent-posts-section { padding: 60px 0; }
-  .posts-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-top: 30px; }
-  .post-card { text-decoration: none; color: inherit; padding: 18px; border: 1px solid var(--border); border-radius: 8px; }
-  .post-card:hover { background: var(--bg); }
-  .post-card h4 { margin: 8px 0 0; font-size: 15px; color: var(--primary); }
-  .post-card .date { font-size: 12px; color: #94a3b8; }
 </style>
 
 <section class="hero">
   <div class="container">
-    <h2>Panduan DeepSeek untuk Pengguna Malaysia</h2>
+    <h1>Panduan DeepSeek untuk Pengguna Malaysia</h1>
     <p>Laman ini mengumpul nota tentang log masuk web, sambungan API, penulisan prompt, penyelesaian ralat 503/429, dan pemasangan tempatan dengan Ollama. Kandungan ditulis untuk kegunaan harian PKS dan pembangun — bukan laman rasmi DeepSeek.</p>
   </div>
 </section>
 
 <div class="container">
   <div class="matrix-grid">
+    {% for post in collections.homepagePosts %}
     <div class="matrix-item">
-      <h3>Log masuk web & ralat 503</h3>
-      <p>Semak pelayar, rangkaian Unifi/TM, dan cache apabila log masuk gagal atau pelayan sibuk.</p>
-      <a href="/posts/deepseek-web-login-troubleshoot/">Baca tutorial →</a>
+      <h3>{{ post.data.title }}</h3>
+      <p>{{ post.data.description }}</p>
+      <a href="{{ post.url }}">Baca tutorial →</a>
     </div>
-    <div class="matrix-item">
-      <h3>API Key & had 429</h3>
-      <p>Permohonan kunci, simpanan selamat, dan cara baca isyarat rate limit.</p>
-      <a href="/posts/deepseek-api-key-and-limits/">Baca tutorial →</a>
-    </div>
-    <div class="matrix-item">
-      <h3>Ulang cuba 503/429</h3>
-      <p>Exponential backoff, jitter, dan circuit breaker untuk API production.</p>
-      <a href="/posts/deepseek-api-retry-guide/">Baca tutorial →</a>
-    </div>
-    <div class="matrix-item">
-      <h3>Asas prompt</h3>
-      <p>Peranan, tugas, format output — kurangkan jawapan kosong dan halusinasi.</p>
-      <a href="/posts/deepseek-prompt-basics/">Baca tutorial →</a>
-    </div>
-    <div class="matrix-item">
-      <h3>Ollama tempatan</h3>
-      <p>Tarik model DeepSeek di Windows/macOS dan uji output Bahasa Melayu.</p>
-      <a href="/posts/deepseek-ollama-local-setup/">Baca tutorial →</a>
-    </div>
-    <div class="matrix-item">
-      <h3>Arkib artikel</h3>
-      <p>Lihat senarai penuh tutorial dan nota teknikal lain.</p>
-      <a href="/posts/">Lihat semua →</a>
-    </div>
+    {% endfor %}
   </div>
+  <p style="text-align:center;margin:-40px 0 60px;"><a href="/posts/" style="color:var(--primary);font-weight:600;text-decoration:none;">Lihat semua tutorial teras →</a></p>
 
   <section class="long-desc">
     <div class="desc-flex">
@@ -76,20 +50,8 @@ pageKeywords: DeepSeek Malaysia,DeepSeek API,DeepSeek login,DeepSeek prompt,Olla
         <p>Jika anda merancang integrasi API, baca dulu nota kunci & had, kemudian strategi ulang cuba. Untuk data sensitif atau ujian tanpa internet, mulakan dengan Ollama sebelum bincang RAG atau pelayan mandiri.</p>
       </div>
       <div class="desc-content">
-        <p style="background:var(--bg); padding:24px; border-radius:12px; margin:0;">Semasa saya uji dari rangkaian pejabat di KL, masalah log masuk paling kerap disebabkan VPN korporat atau plugin pelayar — bukan akaun rosak. Cuba tetingkap inkognito dan rangkaian rumah sebelum buat tiket sokongan.</p>
+        <p style="background:var(--bg-light); padding:24px; border-radius:12px; margin:0;">Semasa saya uji dari rangkaian pejabat di KL, masalah log masuk paling kerap disebabkan VPN korporat atau plugin pelayar — bukan akaun rosak. Cuba tetingkap inkognito dan rangkaian rumah sebelum buat tiket sokongan.</p>
       </div>
-    </div>
-  </section>
-
-  <section class="recent-posts-section">
-    <h3 style="font-size: 22px; border-bottom: 2px solid var(--primary); padding-bottom: 10px;">Tutorial terkini</h3>
-    <div class="posts-grid">
-      {% for post in collections.indexablePosts | limit(5) %}
-        <a href="{{ post.url }}" class="post-card">
-          <span class="date">{{ post.date | dateFilter }}</span>
-          <h4>{{ post.data.title }}</h4>
-        </a>
-      {% endfor %}
     </div>
   </section>
 </div>

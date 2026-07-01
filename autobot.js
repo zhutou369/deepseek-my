@@ -61,8 +61,45 @@ function parseJsonResponse(text) {
     } catch (error) {
         const match = clean.match(/\{[\s\S]*\}/);
         if (!match) throw error;
-        return JSON.parse(match[0]);
+        try {
+            return JSON.parse(match[0]);
+        } catch (innerError) {
+            throw new Error(`JSON parse gagal: ${innerError.message}`);
+        }
     }
+}
+
+const ARTICLE_JSON_SCHEMA = {
+    type: 'object',
+    properties: {
+        title: { type: 'string' },
+        description: { type: 'string' },
+        slug: { type: 'string' },
+        tags: { type: 'array', items: { type: 'string' } },
+        body: { type: 'string' }
+    },
+    required: ['title', 'description', 'slug', 'tags', 'body']
+};
+
+const ARTICLE_JSON_CONFIG = {
+    responseMimeType: 'application/json',
+    responseJsonSchema: ARTICLE_JSON_SCHEMA
+};
+
+async function generateJsonWithRetry(ai, contents, logLabel) {
+    const maxParseAttempts = 2;
+
+    for (let parseAttempt = 1; parseAttempt <= maxParseAttempts; parseAttempt++) {
+        const text = await generateWithRetry(ai, contents, logLabel, ARTICLE_JSON_CONFIG);
+        try {
+            return parseJsonResponse(text);
+        } catch (error) {
+            if (parseAttempt >= maxParseAttempts) throw error;
+            console.warn(`⚠️ ${logLabel} JSON tidak sah, cuba semula... (${error.message})`);
+        }
+    }
+
+    throw new Error('Gemini JSON masih gagal selepas retry');
 }
 
 function slugify(value, fallback) {
@@ -132,7 +169,7 @@ ${article.body}
 `;
 }
 
-async function generateWithRetry(ai, contents, logLabel) {
+async function generateWithRetry(ai, contents, logLabel, config = {}) {
     let response;
     let retryCount = 0;
     const maxRetries = 6;
@@ -144,6 +181,7 @@ async function generateWithRetry(ai, contents, logLabel) {
             response = await ai.models.generateContent({
                 model: 'gemini-2.5-flash',
                 contents,
+                config,
             });
 
             if (response && response.text) return response.text;
@@ -202,7 +240,9 @@ async function runAutoBot() {
     for (let currentLoop = 0; currentLoop < maxPosts; currentLoop++) {
         let selectedImages = [];
         if (fs.existsSync(imagesPath)) {
-            const allImages = fs.readFileSync(imagesPath, 'utf-8').split(/\r?\n/).filter(line => line.startsWith('http'));
+            const allImages = fs.readFileSync(imagesPath, 'utf-8')
+                .split(/\r?\n/)
+                .filter(line => line.startsWith('http') || line.startsWith('/static/'));
             selectedImages = allImages.sort(() => 0.5 - Math.random()).slice(0, 2);
         }
 
@@ -235,6 +275,16 @@ async function runAutoBot() {
     10. Terjemah topik menjadi slug bahasa Inggeris yang ringkas, huruf kecil dan dipisahkan tanda sempang.
     11. Cadangan Front Matter Tags: ${visibleTags}.
     12. Jangan hasilkan H1 (#) dalam body. Body bermula dengan H2 (##).
+    13. 【Pautan dalaman】 setiap artikel mesti ada:
+       - 2～5 pautan dalaman ke tutorial teras, anchor text semula jadi (jangan setiap "DeepSeek" dipautkan).
+       - 0～2 pautan rasmi (platform.deepseek.com / chat.deepseek.com / ollama.com), maksimum 1 setiap domain.
+       - Pilih 2～3 pillar yang relevan:
+         /posts/deepseek-api-key-and-limits/
+         /posts/deepseek-api-retry-guide/
+         /posts/deepseek-prompt-basics/
+         /posts/deepseek-web-login-troubleshoot/
+         /posts/deepseek-ollama-local-setup/
+       - Format: [teks anchor deskriptif](/posts/xxx/) — jangan paut ke domain deepseek-*.com lain dalam body.
 
     ${imageInstruction}
 
@@ -249,8 +299,11 @@ async function runAutoBot() {
         `;
 
         try {
-            const firstPassText = await generateWithRetry(ai, prompt, 'Menghubungi Gemini API untuk artikel JSON pusingan pertama...');
-            const firstPassArticle = normalizeArticle(parseJsonResponse(firstPassText), currentTopic, dynamicTags);
+            const firstPassArticle = normalizeArticle(
+                await generateJsonWithRetry(ai, prompt, 'Menghubungi Gemini API untuk artikel JSON pusingan pertama...'),
+                currentTopic,
+                dynamicTags
+            );
             console.log('🎉 Artikel JSON pusingan pertama berjaya. Memulakan polish pusingan kedua.');
 
             const polishPrompt = `
@@ -265,13 +318,17 @@ async function runAutoBot() {
     - Tukar sebahagian kata hubung supaya tidak asyik "selain itu", "oleh itu", "pada masa yang sama".
     - Panjang 800-1500 patah perkataan, perenggan bervariasi, guna "## Isi Kandungan".
     - Kekalkan fields JSON: title, description, slug, tags, body. Jangan output code fence.
+    - Kekalkan 2～5 pautan dalaman pillar (/posts/deepseek-api-key-and-limits/ dll.) dengan anchor text semula jadi.
 
     JSON asal:
     ${JSON.stringify(firstPassArticle, null, 2)}
             `;
 
-            const polishedText = await generateWithRetry(ai, polishPrompt, 'Menjalankan polish pusingan kedua...');
-            const polishedArticle = normalizeArticle(parseJsonResponse(polishedText), currentTopic, dynamicTags);
+            const polishedArticle = normalizeArticle(
+                await generateJsonWithRetry(ai, polishPrompt, 'Menjalankan polish pusingan kedua...'),
+                currentTopic,
+                dynamicTags
+            );
             const articleContent = buildMarkdown(polishedArticle, todayStr, randomId);
 
             const fileName = `${todayStr}-post-${randomId}-${currentLoop}.md`;

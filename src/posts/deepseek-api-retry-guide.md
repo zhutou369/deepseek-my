@@ -2,14 +2,15 @@
 title: "Strategi ulang cuba 503/429 API DeepSeek"
 description: "Implement exponential backoff, jitter, dan circuit breaker apabila DeepSeek API return 503 atau 429."
 date: 2026-06-27
-updated: 2026-06-27
+updated: 2026-06-30
 featured: true
+coverImage: "/static/posts/deepseek-api-retry-cover.svg"
 tags: ["posts"]
 layout: "layouts/post.njk"
 permalink: "/posts/deepseek-api-retry-guide/index.html"
 ---
 
-503 dan 429 kedua-duanya sementara, tetapi perlakuan berbeza: 503 biasanya pelayan sibuk, 429 bermaksud anda terlalu pantas. Keduanya perlu retry — bukan loop tanpa henti.
+503 dan 429 kedua-duanya sementara, tetapi perlakuan berbeza: 503 biasanya pelayan sibuk, 429 bermaksud anda terlalu pantas. Sebelum retry, pastikan [API Key & had kadar](/posts/deepseek-api-key-and-limits/) dikonfigurasi dengan betul.
 
 ## Bezakan jenis ralat
 
@@ -20,7 +21,11 @@ permalink: "/posts/deepseek-api-retry-guide/index.html"
 | 401/403 | Auth atau kebenaran | Tidak — semak Key |
 | 400 | Format permintaan salah | Tidak — betulkan parameter |
 
+401/403? Kembali ke [panduan API Key](/posts/deepseek-api-key-and-limits/) semak Key tamat tempoh atau campur environment.
+
 ## Exponential backoff
+
+![Garis masa backoff untuk 503 dan 429](/static/posts/deepseek-api-retry-step.svg)
 
 Aliran asas:
 
@@ -58,11 +63,12 @@ Jika 503/429 berulang, hentikan seketika permintaan baru:
 - Utamakan header `Retry-After`
 - Kurangkan concurrency worker (contoh: dari 10 ke 2)
 - Pecahkan batch job kepada slot masa berbeza
+- Kurangkan panjang prompt — lihat [asas prompt](/posts/deepseek-prompt-basics/)
 
 ## Amalan production
 
 - Jangan retry 401/403 — ia membazir kuota
 - Log setiap retry dengan `attempt` dan `wait_ms`
-- Paparkan status “sistem sibuk” kepada pengguna akhir semasa litar terbuka
+- Uji dari rangkaian pejabat KL dengan VPN dimatikan sebelum salahkan API
 
-Minggu lepas saya uji skrip ringkasan dokumen dari VPS di Singapura — tanpa jitter, tiga instance retry serentak dan semua kena 429 lebih lama. Selepas tambah jitter + had concurrency, kejadian turun ketara.
+Untuk ujian offline tanpa API awan, cuba [Ollama tempatan](/posts/deepseek-ollama-local-setup/). Masalah log masuk web? Lihat [penyelesaian login](/posts/deepseek-web-login-troubleshoot/).

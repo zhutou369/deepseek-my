@@ -1,14 +1,11 @@
 {
-  "name": "my-11ty-site",
+  "name": "deepseek-my.com",
   "version": "1.0.0",
-  "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "validate:svg": "node tools/validate-svgs.js",
+    "build": "node tools/validate-svgs.js && npx @11ty/eleventy",
+    "start": "npx @11ty/eleventy --serve"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "description": "",
   "devDependencies": {
     "@11ty/eleventy": "^3.1.5"
   },

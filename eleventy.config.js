@@ -1,6 +1,20 @@
+const siteData = require("./src/_data/site.json");
+
+function assetVersion() {
+  return siteData.assetVersion || "1";
+}
+
+function cacheBustStaticUrl(url) {
+  const path = String(url || "").trim();
+  if (!path.startsWith("/static/")) return path;
+  if (/[?&]v=/.test(path)) return path;
+  return `${path}?v=${assetVersion()}`;
+}
+
 function isPostIndexable(data, inputPath) {
-  if (data.noindex === true || data.generated === true) return false;
+  if (data.noindex === true) return false;
   if (data.featured === true) return true;
+  if (data.generated === true) return false;
 
   const path = inputPath || "";
   if (/\/posts\/\d{4}-\d{2}-\d{2}-post-\d+-\d+\.md$/i.test(path)) return false;
@@ -24,10 +38,22 @@ module.exports = function (eleventyConfig) {
 
   eleventyConfig.addPassthroughCopy("src/css");
   eleventyConfig.addPassthroughCopy("src/static");
+  eleventyConfig.addPassthroughCopy({ "src/_headers": "_headers" });
   eleventyConfig.addPassthroughCopy("src/images.txt");
   eleventyConfig.addPassthroughCopy("src/ai1");
   eleventyConfig.addPassthroughCopy("src/robots.txt");
+  if (require("fs").existsSync("src/BingSiteAuth.xml")) {
+    eleventyConfig.addPassthroughCopy("src/BingSiteAuth.xml");
+  }
   eleventyConfig.addPassthroughCopy({ "src/*.txt": "/" });
+
+  eleventyConfig.addFilter("assetUrl", cacheBustStaticUrl);
+
+  eleventyConfig.addTransform("cache-bust-static-assets", function (content, outputPath) {
+    if (!outputPath || !outputPath.endsWith(".html")) return content;
+    const version = assetVersion();
+    return content.replace(/\/static\/[^"'\s<>]+\.svg(?![^"']*[?&]v=)/g, (path) => `${path}?v=${version}`);
+  });
 
   eleventyConfig.addGlobalData("eleventyComputed", {
     noindex: (data) => {
@@ -52,6 +78,19 @@ module.exports = function (eleventyConfig) {
       .sort((a, b) => b.date - a.date);
   });
 
+  eleventyConfig.addCollection("homepagePosts", function (collectionApi) {
+    const posts = collectionApi
+      .getFilteredByGlob("src/posts/*.md")
+      .filter((item) => isPostIndexable(item.data, item.inputPath));
+    const pillars = posts
+      .filter((item) => !/\/\d{4}-\d{2}-\d{2}-post-/.test(item.inputPath))
+      .sort((a, b) => a.inputPath.localeCompare(b.inputPath, "ms-MY"));
+    const featured = posts
+      .filter((item) => /\/\d{4}-\d{2}-\d{2}-post-/.test(item.inputPath))
+      .sort((a, b) => b.date - a.date);
+    return [...pillars, ...featured].slice(0, 8);
+  });
+
   eleventyConfig.addCollection("tagList", function (collectionApi) {
     const tagSet = new Set();
     collectionApi
@@ -69,7 +108,10 @@ module.exports = function (eleventyConfig) {
     return [...tagSet].sort((a, b) => a.localeCompare(b, "ms-MY"));
   });
 
-  eleventyConfig.addFilter("limit", (arr, limit) => (Array.isArray(arr) ? arr.slice(0, limit) : []));
+  eleventyConfig.addFilter("limit", function (arr, limit) {
+    if (!Array.isArray(arr)) return [];
+    return arr.slice(0, limit);
+  });
 
   eleventyConfig.addFilter("postsByTag", function (posts, tag) {
     if (!Array.isArray(posts)) return [];

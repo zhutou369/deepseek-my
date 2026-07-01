@@ -2,18 +2,21 @@
 title: "Log masuk DeepSeek Web: ralat 503 & penyelesaian"
 description: "Langkah demi langkah atasi log masuk DeepSeek web gagal, ralat 503 pelayan sibuk, masalah captcha, dan cache pelayar di Malaysia."
 date: 2026-06-27
-updated: 2026-06-27
+updated: 2026-06-30
 featured: true
+coverImage: "/static/posts/deepseek-login-cover.svg"
 tags: ["posts"]
 layout: "layouts/post.njk"
 permalink: "/posts/deepseek-web-login-troubleshoot/index.html"
 ---
 
-Kebanyakan masalah log masuk DeepSeek web bukan kerana akaun rosak, tetapi disebabkan cache pelayar, laluan rangkaian, atau trafik puncak. Berikut urutan semak dari yang paling kerap berlaku di Malaysia.
+Kebanyakan masalah log masuk DeepSeek web bukan kerana akaun rosak, tetapi disebabkan cache pelayar, laluan rangkaian, atau trafik puncak. Jika web gagal tetapi API masih berfungsi, semak juga [strategi ulang cuba](/posts/deepseek-api-retry-guide/) untuk perbezaan 503 frontend vs API.
 
 ## Sahkan pintu masuk & status akaun
 
-1. Guna `chat.deepseek.com` atau pautan web yang DeepSeek umumkan — elakkan laman pihak ketiga yang meniru UI.
+![Aliran semak log masuk DeepSeek web](/static/posts/deepseek-login-step.svg)
+
+1. Guna [chat.deepseek.com](https://chat.deepseek.com) atau pautan web rasmi — elakkan laman pihak ketiga yang meniru UI.
 2. Jika log masuk Google atau e-mel, pastikan akaun itu boleh terima kod pengesahan.
 3. Log masuk berulang dari telefon dan komputer serentak kadang-kadang membuang sesi; selesaikan satu peranti dahulu.
 
@@ -48,4 +51,4 @@ Jika masih gagal, catat:
 - Adakah VPN/proxy digunakan
 - Masa mula masalah dan sama ada boleh diulang
 
-Dengan maklumat ini, pasukan IT biasanya boleh bezakan isu pelayan, rangkaian, atau pelayar dengan cepat.
+Selepas log masuk stabil, langkah seterusnya biasanya [API Key & had 429](/posts/deepseek-api-key-and-limits/) atau [Ollama tempatan](/posts/deepseek-ollama-local-setup/) untuk ujian offline.

@@ -2,18 +2,21 @@
 title: "API DeepSeek: kunci, had 429 & token"
 description: "Cara mohon API Key DeepSeek, simpan kunci dengan selamat, fahami rate limit, dan tangani ralat 429 Too Many Requests."
 date: 2026-06-27
-updated: 2026-06-27
+updated: 2026-06-30
 featured: true
+coverImage: "/static/posts/deepseek-api-key-cover.svg"
 tags: ["posts"]
 layout: "layouts/post.njk"
 permalink: "/posts/deepseek-api-key-and-limits/index.html"
 ---
 
-Sebelum sambung DeepSeek API ke sistem CRM atau chatbot PKS, fahami dulu pengurusan kunci dan had kadar — ini mengelakkan 429 berulang selepas go-live.
+Sebelum sambung DeepSeek API ke sistem CRM atau chatbot PKS, fahami dulu pengurusan kunci dan had kadar — ini mengelakkan 429 berulang selepas go-live. Jika anda sudah menerima had kadar, baca juga [strategi ulang cuba 503/429](/posts/deepseek-api-retry-guide/).
 
 ## Mohon & simpan API Key
 
-1. Log masuk portal pembangun DeepSeek, cipta projek, dan jana API Key.
+![Aliran permohonan API Key DeepSeek](/static/posts/deepseek-api-key-step.svg)
+
+1. Log masuk [DeepSeek Developer Platform](https://platform.deepseek.com), cipta projek, dan jana API Key.
 2. Kunci hanya dipaparkan sekali; simpan ke Secret Manager (GitHub Secrets, Vault, atau storan awan).
 3. Jangan letak Key dalam JavaScript frontend atau repo Git awam.
 4. Guna Key berbeza untuk staging dan production supaya mudah putar semula.
@@ -30,13 +33,13 @@ Semasa pembangunan:
 
 - Log medan `x-ratelimit-*` jika API menyediakan.
 - Queue kerja batch — jangan hantar ratusan permintaan serentak.
-- Pecahkan teks panjang supaya prompt tidak melebihi had satu panggilan.
+- Pecahkan teks panjang; rujuk [asas prompt](/posts/deepseek-prompt-basics/) untuk kawal panjang output.
 
 ## Apabila 429 muncul
 
 1. **Hentikan retry berterusan** — ia memanjangkan tempoh sekatan.
 2. **Baca Retry-After** dalam header respons jika ada.
-3. **Backoff eksponen**: 1s → 2s → 4s, maksimum 3–5 cubaan.
+3. **Backoff eksponen**: 1s → 2s → 4s, maksimum 3–5 cubaan. Contoh kod penuh ada dalam [panduan ulang cuba](/posts/deepseek-api-retry-guide/).
 4. **Downgrade**: waktu puncak, guna model lebih kecil atau cache jawapan serupa.
 
 ## Pantau penggunaan & kos
@@ -49,7 +52,7 @@ Semasa pembangunan:
 
 - [ ] Key tidak terdedah di frontend
 - [ ] Timeout ditetapkan (30–60 saat)
-- [ ] Retry 429/503 dan circuit breaker siap
+- [ ] Retry 429/503 dan circuit breaker siap (lihat [panduan retry](/posts/deepseek-api-retry-guide/))
 - [ ] Log asas: status, masa, token
 
-Langkah ini membuat integrasi API lebih stabil walaupun trafik meningkat di waktu puncak.
+Data sensitif tidak sesuai ke awan? Mulakan PoC dengan [Ollama tempatan](/posts/deepseek-ollama-local-setup/). Untuk perkhidmatan production, API masih disyorkan. Lebih banyak konteks Malaysia ada di [laman utama](/).

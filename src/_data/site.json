@@ -5,5 +5,7 @@
   "keywords": "DeepSeek,DeepSeek Malaysia,DeepSeek API,DeepSeek login,DeepSeek prompt,Ollama DeepSeek",
   "url": "https://deepseek-my.com",
   "laId": "3K7l95Zodr0uFrIN",
-  "locale": "ms_MY"
+  "locale": "ms_MY",
+  "ogImage": "/static/og-default.png",
+  "assetVersion": "1"
 }

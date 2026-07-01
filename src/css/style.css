@@ -5,6 +5,10 @@
   --text-light: #4a5568;       /* 煙燻中灰 */
   --bg-light: #f7fafc;         /* 極客淺灰 */
   --border-color: #e2e8f0;     /* 細膩線條 */
+  --primary: #06b6d4;
+  --bg-dark: #0f172a;
+  --border: #e2e8f0;
+  --text-main: #334155;
 }
 
 *, *::before, *::after {
@@ -314,4 +318,68 @@ a:hover {
   padding-top: 20px;
   font-size: 13px;
   text-align: center;
+}
+
+.header-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.nav-links {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  gap: 25px;
+}
+
+.nav-links a {
+  font-weight: 600;
+  color: var(--text-light);
+  padding: 5px 0;
+}
+
+.nav-links a.active,
+.nav-links a:hover {
+  color: var(--accent-color);
+  border-bottom: 2px solid var(--accent-color);
+}
+
+.post-cover {
+  max-width: 800px;
+  margin: 0 auto 40px;
+}
+
+.post-cover img {
+  width: 100%;
+  height: auto;
+  border-radius: 12px;
+}
+
+.posts-list {
+  display: grid;
+  gap: 30px;
+}
+
+.posts-list-item {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  gap: 24px;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 30px;
+  align-items: start;
+}
+
+.posts-list-thumb img {
+  width: 100%;
+  height: auto;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+}
+
+@media (max-width: 640px) {
+  .posts-list-item {
+    grid-template-columns: 1fr;
+  }
 }
