@@ -7,12 +7,12 @@ const BING_KEY = (process.env.INDEXNOW_KEY || '').trim();
 const OUTPUT_DIR = path.join(__dirname, '..', '_site');
 
 const BING_403_HELP = [
-    '❌ IndexNow 403：Bing 尚未授权此域名。',
-    '   验证文件可访问 ≠ API 已授权。请按以下步骤操作：',
-    '   1. 打开 https://www.bing.com/webmasters 添加 deepseek-my.com',
-    '   2. 用 XML 文件 / Meta 标签 / DNS 完成所有权验证（勿仅用 Google 导入）',
-    '   3. 在 Settings → IndexNow 生成 key，更新 GitHub Secret INDEXNOW_KEY',
-    '   4. 确保 https://deepseek-my.com/{key}.txt 内容仅为 key 本身（无换行）',
+    '❌ IndexNow 403: Bing belum benarkan domain ini.',
+    '   Fail pengesahan boleh diakses ≠ API sudah dibenarkan. Langkah:',
+    '   1. Buka https://www.bing.com/webmasters dan tambah deepseek-my.com',
+    '   2. Sahkan pemilikan via XML / Meta tag / DNS (jangan hanya import Google)',
+    '   3. Settings → IndexNow: jana key, kemas kini GitHub Secret INDEXNOW_KEY',
+    '   4. Pastikan https://deepseek-my.com/{key}.txt hanya mengandungi key (tiada baris baru)',
 ].join('\n');
 
 function getAllHtmlFiles(dirPath, arrayOfFiles = []) {
@@ -65,7 +65,7 @@ function postIndexNow(requestData) {
 
 async function main() {
     if (!BING_KEY) {
-        console.log('ℹ️ 未设置 INDEXNOW_KEY，跳过 Bing IndexNow 推送。');
+        console.log('ℹ️ INDEXNOW_KEY tidak ditetapkan, langkau push IndexNow.');
         process.exit(0);
     }
 
@@ -80,11 +80,11 @@ async function main() {
     );
 
     if (urlList.length === 0) {
-        console.log('ℹ️ 未发现有效页面，无需推送。');
+        console.log('ℹ️ Tiada halaman sah, tidak perlu push.');
         process.exit(0);
     }
 
-    console.log(`🚀 正在将 ${urlList.length} 个有效网域 URL 推送给必应集群...`);
+    console.log(`🚀 Menghantar ${urlList.length} URL ke Bing IndexNow...`);
 
     const requestData = JSON.stringify({
         host: DOMAIN,
@@ -96,11 +96,11 @@ async function main() {
     const { statusCode, body } = await postIndexNow(requestData);
 
     if (statusCode === 200 || statusCode === 202) {
-        console.log(`✅ [完美闭环] 必应 IndexNow 成功接收！状态码: ${statusCode}`);
+        console.log(`✅ IndexNow diterima! Kod status: ${statusCode}`);
         process.exit(0);
     }
 
-    console.error(`❌ 推送失败，状态码: ${statusCode}, 响应: ${body}`);
+    console.error(`❌ Push gagal, kod: ${statusCode}, respons: ${body}`);
     if (statusCode === 403 && body.includes('UserForbiddedToAccessSite')) {
         console.error(BING_403_HELP);
     }
@@ -108,6 +108,6 @@ async function main() {
 }
 
 main().catch((err) => {
-    console.error('❌ 自动化推送运行出错:', err.message);
+    console.error('❌ Ralat push automatik:', err.message);
     process.exit(1);
 });
