@@ -56,3 +56,10 @@ Semasa pembangunan:
 - [ ] Log asas: status, masa, token
 
 Data sensitif tidak sesuai ke awan? Mulakan PoC dengan [Ollama tempatan](/posts/deepseek-ollama-local-setup/). Untuk perkhidmatan production, API masih disyorkan. Lebih banyak konteks Malaysia ada di [laman utama](/).
+
+## Tutorial berkaitan
+
+- [503/429 ulang cuba & circuit breaker](/posts/deepseek-api-retry-guide/)
+- [Asas prompt & kawalan halusinasi](/posts/deepseek-prompt-basics/)
+- [Penyelesaian log masuk web](/posts/deepseek-web-login-troubleshoot/)
+- [Pemasangan Ollama tempatan](/posts/deepseek-ollama-local-setup/)

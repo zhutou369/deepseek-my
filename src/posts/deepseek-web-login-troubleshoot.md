@@ -52,3 +52,10 @@ Jika masih gagal, catat:
 - Masa mula masalah dan sama ada boleh diulang
 
 Selepas log masuk stabil, langkah seterusnya biasanya [API Key & had 429](/posts/deepseek-api-key-and-limits/) atau [Ollama tempatan](/posts/deepseek-ollama-local-setup/) untuk ujian offline.
+
+## Tutorial berkaitan
+
+- [API Key, had kadar & 429](/posts/deepseek-api-key-and-limits/)
+- [503/429 ulang cuba & circuit breaker](/posts/deepseek-api-retry-guide/)
+- [Asas prompt & kawalan halusinasi](/posts/deepseek-prompt-basics/)
+- [Pemasangan Ollama tempatan](/posts/deepseek-ollama-local-setup/)

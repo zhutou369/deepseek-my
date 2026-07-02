@@ -72,3 +72,9 @@ Jika 503/429 berulang, hentikan seketika permintaan baru:
 - Uji dari rangkaian pejabat KL dengan VPN dimatikan sebelum salahkan API
 
 Untuk ujian offline tanpa API awan, cuba [Ollama tempatan](/posts/deepseek-ollama-local-setup/). Masalah log masuk web? Lihat [penyelesaian login](/posts/deepseek-web-login-troubleshoot/).
+
+## Tutorial berkaitan
+
+- [API Key, had kadar & 429](/posts/deepseek-api-key-and-limits/)
+- [Asas prompt & kawalan halusinasi](/posts/deepseek-prompt-basics/)
+- [Penyelesaian log masuk web](/posts/deepseek-web-login-troubleshoot/)

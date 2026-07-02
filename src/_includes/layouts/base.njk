@@ -4,12 +4,19 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="baidu-site-verification" content="codeva-NNtqMpLLuE">
+  {% if site.googleSiteVerification %}
+  <meta name="google-site-verification" content="{{ site.googleSiteVerification }}">
+  {% endif %}
   {% set docTitle = title or site.title %}
   {% set metaDescription = description or site.description %}
   {% set canonicalPath = canonicalUrl or page.url or "/" %}
   {% set canonical = site.url + canonicalPath %}
-  {% set shareImage = (ogImage or coverImage or site.ogImage or "/static/og-default.png") | assetUrl %}
+  {% set rawImage = ogImage or coverImage or site.ogImage or "/static/og-default.png" %}
+  {% set shareImage = (rawImage if not rawImage.endsWith('.svg') else site.ogImage) | assetUrl %}
   {% set shareImageAbs = site.url + shareImage %}
+  <link rel="icon" href="/static/favicon.png" type="image/png">
+  <link rel="apple-touch-icon" href="/static/apple-touch-icon.png">
+  <link rel="alternate" type="application/rss+xml" title="{{ site.brand }}" href="/feed.xml">
   <title>{% if page.url != "/" %}{{ docTitle }} | {{ site.brand }}{% else %}{{ site.title }}{% endif %}</title>
   <meta name="description" content="{{ metaDescription }}">
   <meta name="keywords" content="{{ pageKeywords or site.keywords }}">
@@ -39,6 +46,15 @@
 } | dump | safe }}
   </script>
   <link rel="stylesheet" href="/css/style.css">
+  {% if site.gaId %}
+  <script async src="https://www.googletagmanager.com/gtag/js?id={{ site.gaId }}"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', '{{ site.gaId }}');
+  </script>
+  {% endif %}
   <script charset="UTF-8" id="LA_COLLECT" src="//sdk.51.la/js-sdk-pro.min.js" defer></script>
   <script>window.addEventListener("load",function(){if(window.LA){LA.init({id:"{{ site.laId }}",ck:"{{ site.laId }}"})}})</script>
 </head>
@@ -63,7 +79,7 @@
   <footer class="site-footer">
     <div class="container">
       <div class="copy">
-        <p>&copy; 2026 {{ site.brand }} · Laman rujukan pihak ketiga, bukan laman rasmi DeepSeek. <a href="/about/" style="color:#93c5fd;margin-left:8px;">Tentang laman</a></p>
+        <p>&copy; 2026 {{ site.brand }} · Laman rujukan pihak ketiga, bukan laman rasmi DeepSeek. <a href="/about/" style="color:#93c5fd;margin-left:8px;">Tentang laman</a><a href="/privacy/" style="color:#93c5fd;margin-left:8px;">Dasar privasi</a></p>
       </div>
     </div>
   </footer>

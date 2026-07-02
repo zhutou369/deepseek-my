@@ -76,3 +76,10 @@ Selepas Ollama stabil:
 - Jika panggilan API awan gagal 503/429, rujuk [panduan retry](/posts/deepseek-api-retry-guide/)
 
 Lebih banyak tutorial teras ada di [laman utama](/).
+
+## Tutorial berkaitan
+
+- [API Key, had kadar & 429](/posts/deepseek-api-key-and-limits/)
+- [503/429 ulang cuba & circuit breaker](/posts/deepseek-api-retry-guide/)
+- [Asas prompt & kawalan halusinasi](/posts/deepseek-prompt-basics/)
+- [Penyelesaian log masuk web](/posts/deepseek-web-login-troubleshoot/)
